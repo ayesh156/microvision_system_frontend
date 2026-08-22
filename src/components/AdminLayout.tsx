@@ -1,0 +1,1565 @@
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useShopBranding } from '../contexts/ShopBrandingContext';
+import { useShopSections } from '../contexts/ShopSectionsContext';
+import { useDataCache } from '../contexts/DataCacheContext';
+import { mockJobNotes } from '../data/mockData';
+import {
+  Package, FileText, Users, LayoutDashboard, Settings, Database,
+  Moon, Sun, Menu, X, ChevronLeft, ChevronRight, Bell, Search,
+  User, HelpCircle, ChevronDown, Sparkles, TrendingUp,
+  FolderTree, Building, Shield, Truck, ClipboardCheck, Wrench, Layers, ClipboardList,
+  Calculator, FileCheck, Wallet, Brain, Zap, StickyNote, CalendarDays, Lightbulb, LogOut
+} from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
+import { AIAssistant } from './AIAssistant';
+
+interface SubNavItem {
+  path: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  badge?: string | null;
+  isDisabled?: boolean;
+}
+
+interface NavItem {
+  path: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  badge: string | null;
+  subItems?: SubNavItem[];
+  isDisabled?: boolean;
+}
+
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
+
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
+  const { theme, toggleTheme, aiAutoFillEnabled, toggleAiAutoFill } = useTheme();
+  const { user, logout } = useAuth();
+  const { branding } = useShopBranding();
+  const { isSectionHidden, hiddenSections, isLoading: sectionsLoading } = useShopSections();
+  const { invoices: cachedInvoices, customers: cachedCustomers, loadInvoices, loadCustomers, invoicesLoaded, customersLoaded } = useDataCache();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const [isTablet, setIsTablet] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // Detect tablet viewport (768-1024px) and auto-collapse sidebar
+  useEffect(() => {
+    const checkTablet = () => {
+      const width = window.innerWidth;
+      const tablet = width >= 768 && width < 1024;
+      setIsTablet(tablet);
+    };
+    checkTablet();
+    window.addEventListener('resize', checkTablet);
+    return () => window.removeEventListener('resize', checkTablet);
+  }, []);
+
+  // Auto-collapse sidebar on tablet for more content space
+  useEffect(() => {
+    if (isTablet) {
+      setSidebarCollapsed(true);
+    }
+  }, [isTablet]);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [searchPopupOpen, setSearchPopupOpen] = useState(false);
+  const searchPopupRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [notificationCount] = useState(3);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+  const [collapsedPopover, setCollapsedPopover] = useState<string | null>(null);
+  const [popoverPosition, setPopoverPosition] = useState<number>(0);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const sidebarNavRef = useRef<HTMLElement>(null);
+  const mobileSidebarNavRef = useRef<HTMLElement>(null);
+  const sidebarScrollPositionRef = useRef<number>(0);
+  const mobileSidebarScrollPositionRef = useRef<number>(0);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setProfileDropdownOpen(false);
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  // Save sidebar scroll position before route change
+  useEffect(() => {
+    const saveScrollPosition = () => {
+      if (sidebarNavRef.current) {
+        sidebarScrollPositionRef.current = sidebarNavRef.current.scrollTop;
+      }
+      if (mobileSidebarNavRef.current) {
+        mobileSidebarScrollPositionRef.current = mobileSidebarNavRef.current.scrollTop;
+      }
+    };
+
+    // Save position when clicking on links
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('a')) {
+        saveScrollPosition();
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
+
+  // Restore sidebar scroll position after route change
+  useEffect(() => {
+    // Use requestAnimationFrame to ensure DOM has updated
+    requestAnimationFrame(() => {
+      if (sidebarNavRef.current && sidebarScrollPositionRef.current > 0) {
+        sidebarNavRef.current.scrollTop = sidebarScrollPositionRef.current;
+      }
+      if (mobileSidebarNavRef.current && mobileSidebarScrollPositionRef.current > 0) {
+        mobileSidebarNavRef.current.scrollTop = mobileSidebarScrollPositionRef.current;
+      }
+    });
+  }, [location.pathname]);
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+    setCollapsedPopover(null);
+  }, [location.pathname]);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = () => setProfileDropdownOpen(false);
+    if (profileDropdownOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [profileDropdownOpen]);
+
+  // Close search popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchPopupRef.current && !searchPopupRef.current.contains(event.target as Node)) {
+        setSearchPopupOpen(false);
+      }
+    };
+    if (searchPopupOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [searchPopupOpen]);
+
+  // Close collapsed popover when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+        setCollapsedPopover(null);
+      }
+    };
+    if (collapsedPopover) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [collapsedPopover]);
+
+  // Auto-expand menu when navigating to a sub-item
+  useEffect(() => {
+    navItems.forEach(item => {
+      if (item.subItems) {
+        const isSubItemActive = item.subItems.some(sub => location.pathname === sub.path || location.pathname.startsWith(sub.path + '/'));
+        const isParentActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+        if ((isSubItemActive || isParentActive) && !expandedMenus.includes(item.path)) {
+          setExpandedMenus(prev => [...prev, item.path]);
+        }
+      }
+    });
+  }, [location.pathname]);
+
+  const toggleMenu = (path: string) => {
+    setExpandedMenus(prev =>
+      prev.includes(path)
+        ? prev.filter(p => p !== path)
+        : [...prev, path]
+    );
+  };
+
+  // Load data for sidebar counts if not already loaded
+  const shouldLoadShopData = user?.role !== 'SUPER_ADMIN';
+  
+  useEffect(() => {
+    if (!invoicesLoaded && shouldLoadShopData) {
+      loadInvoices();
+    }
+    if (!customersLoaded && shouldLoadShopData) {
+      loadCustomers();
+    }
+  }, [invoicesLoaded, customersLoaded, loadInvoices, loadCustomers, shouldLoadShopData]);
+
+  // Calculate dynamic counts from shop data (API data)
+  const invoicesPendingCount = useMemo(() => {
+    return cachedInvoices.filter(inv => inv.status === 'unpaid' || inv.status === 'halfpay').length;
+  }, [cachedInvoices]);
+
+  const overdueCustomersCount = useMemo(() => {
+    // Count customers who are overdue based on:
+    // 1. creditStatus is 'overdue' OR
+    // 2. Has credit balance > 0 AND creditDueDate has passed OR
+    // 3. Has any overdue invoice (based on cachedInvoices, matching Customer page logic)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Start of today for fair comparison
+    
+    // Find all customers with overdue invoices from loaded invoices
+    const customersWithOverdueInvoices = new Set<string>();
+    
+    cachedInvoices.forEach(inv => {
+      // Check if invoice is unpaid/halfpay and overdue
+      if (inv.status !== 'fullpaid') {
+        const dueDate = new Date(inv.dueDate);
+        dueDate.setHours(0, 0, 0, 0);
+        
+        // If invoice is overdue, add customer to set
+        if (dueDate < today && inv.customerId) {
+          customersWithOverdueInvoices.add(inv.customerId);
+        }
+      }
+    });
+    
+    return cachedCustomers.filter(c => {
+      // 1. Explicitly marked as overdue
+      if (c.creditStatus === 'overdue') return true;
+      
+      // 2. Has credit balance and property-level due date passed
+      if (c.creditBalance > 0 && c.creditDueDate) {
+        const dueDate = new Date(c.creditDueDate);
+        dueDate.setHours(0, 0, 0, 0);
+        if (dueDate < today) return true;
+      }
+      
+      // 3. Has any overdue invoice based on actual invoice data
+      if (customersWithOverdueInvoices.has(c.id)) return true;
+      
+      return false;
+    }).length;
+  }, [cachedCustomers, cachedInvoices]);
+
+  const pendingJobNotesCount = useMemo(() => {
+    // Pending = not completed, not delivered, not cancelled
+    // TODO: Replace with API data when job notes are added to DataCacheContext
+    return mockJobNotes.filter(jn => 
+      !['completed', 'delivered', 'cancelled'].includes(jn.status)
+    ).length;
+  }, []);
+
+  // Super Admin navigation - Only admin-related sections
+  const superAdminNavItems: NavItem[] = [
+    { path: '/system/admin', icon: LayoutDashboard, label: 'Overview', badge: null },
+    { path: '/system/admin/shops', icon: Building, label: 'Shops', badge: null },
+    { path: '/system/admin/users', icon: Users, label: 'Users', badge: null },
+  ];
+
+  // Regular shop navigation - for ADMIN, MANAGER, STAFF
+  // Parent dropdowns auto-collapse when all their child sub-items are hidden.
+  const shopNavItems: NavItem[] = [
+    // Dashboard (always visible - guarded in ShopSectionsContext)
+    { path: '/system', icon: LayoutDashboard, label: 'Dashboard', badge: null },
+    { path: '/system/invoices', icon: FileText, label: 'Invoices', badge: invoicesPendingCount > 0 ? String(invoicesPendingCount) : null },
+    // Pricing Proposals (Active module)
+    {
+      path: '/system/pricing-proposals',
+      icon: Calculator,
+      label: 'Pricing Proposals',
+      badge: null,
+      subItems: [
+        { path: '/system/quotations', icon: FileCheck, label: 'Quotations' },
+        { path: '/system/estimates', icon: FileText, label: 'Estimates' },
+      ]
+    },
+    // Products & Inventory (Active module)
+    {
+      path: '/system/products',
+      icon: Package,
+      label: 'Products & Inventory',
+      badge: null,
+      subItems: [
+        { path: '/system/products', icon: Package, label: 'All Products' },
+        { path: '/system/categories', icon: FolderTree, label: 'Categories' },
+        { path: '/system/brands', icon: Building, label: 'Brands' },
+      ]
+    },
+    // Customers (Active module)
+    { path: '/system/customers', icon: Users, label: 'Customers', badge: overdueCustomersCount > 0 ? String(overdueCustomersCount) : null },
+    // Procurement (Active module)
+    {
+      path: '/system/suppliers',
+      icon: Truck,
+      label: 'Procurement',
+      badge: null,
+      subItems: [
+        { path: '/system/suppliers', icon: Truck, label: 'Suppliers', badge: '2' },
+        { path: '/system/grn', icon: ClipboardCheck, label: 'Goods Received Notes' },
+      ]
+    },
+    // Job Notes (Pending mock module - hidden by default until enabled)
+    {
+      path: '/system/job-notes',
+      icon: ClipboardList,
+      label: 'Job Notes',
+      badge: null,
+      subItems: [
+        { path: '/system/job-notes', icon: ClipboardList, label: 'All Job Notes', badge: pendingJobNotesCount > 0 ? String(pendingJobNotesCount) : null },
+        { path: '/system/technicians', icon: Wrench, label: 'Technicians' },
+      ]
+    },
+    // Services (Pending mock module - hidden by default until enabled)
+    {
+      path: '/system/services',
+      icon: Wrench,
+      label: 'Services',
+      badge: null,
+      subItems: [
+        { path: '/system/services', icon: Wrench, label: 'All Services' },
+        { path: '/system/service-categories', icon: Layers, label: 'Service Categories' },
+      ]
+    },
+    // Warranties (Pending mock module - hidden by default until enabled)
+    { path: '/system/warranties', icon: Shield, label: 'Warranties', badge: '3' },
+    // Cash Management (Pending mock module - hidden by default until enabled)
+    {
+      path: '/system/cash-management',
+      icon: Wallet,
+      label: 'Cash Management',
+      badge: null,
+      subItems: [
+        { path: '/system/cash-management/transactions', icon: FileText, label: 'Transactions' },
+        { path: '/system/cash-management/accounts', icon: Wallet, label: 'Manage Accounts' },
+        { path: '/system/cash-management/insights', icon: TrendingUp, label: 'Financial Insights' },
+      ]
+    },
+    // Reports (Pending mock module - hidden by default until enabled)
+    { path: '/system/reports', icon: TrendingUp, label: 'Reports', badge: null },
+    // Productivity (Active module)
+    {
+      path: '/system/productivity',
+      icon: Lightbulb,
+      label: 'Productivity',
+      badge: null,
+      subItems: [
+        { path: '/system/notes', icon: StickyNote, label: 'Notes' },
+        { path: '/system/calendar', icon: CalendarDays, label: 'Calendar' },
+      ]
+    },
+  ];
+
+  // Direct URL protection: redirect to Dashboard when navigating directly
+  // to a hidden section route. Applies to ALL shop users including ADMIN
+  // (no role bypass for SuperAdmin-hidden sections).
+  const shopNavPaths = useMemo(() =>
+    shopNavItems.flatMap(item =>
+      item.subItems ? [item.path, ...item.subItems.map(s => s.path)] : [item.path]
+    ), []);
+  useEffect(() => {
+    if (sectionsLoading) return;
+    const isSuperAdminEcosystem = user?.role === 'SUPER_ADMIN' && !user?.shop;
+    if (isSuperAdminEcosystem) return;
+
+    // Dashboard (root fallback) must ALWAYS remain accessible. Never redirect
+    // `/system`, `/system/`, or `/system/dashboard` away, and never target them
+    // as a redirect destination loop. This prevents infinite spinner/redirect
+    // loops when the Dashboard section is (mistakenly) marked hidden.
+    const isDashboardPath =
+      location.pathname === '/system' ||
+      location.pathname === '/system/' ||
+      location.pathname === '/system/dashboard';
+
+    if (isDashboardPath) return;
+
+    const onHiddenRoute = shopNavPaths.some(p =>
+      (location.pathname === p || location.pathname.startsWith(p + '/')) && isSectionHidden(p)
+    );
+    if (onHiddenRoute) {
+      navigate('/system/dashboard', { replace: true });
+    }
+  }, [location.pathname, sectionsLoading, isSectionHidden, user?.role, user?.shop, hiddenSections, shopNavPaths]);
+
+  // Select navigation based on user role
+  const rawNavItems: NavItem[] = (user?.role === 'SUPER_ADMIN') 
+    ? superAdminNavItems 
+    : shopNavItems;
+
+
+  // Key-match a nav item against the reactive hidden section lists.
+  // Delegates to isSectionHidden() which applies BOTH SuperAdmin-hidden and
+  // Admin-hidden sections universally to all shop users (no role bypass).
+  const isHidden = (item: { path?: string; href?: string; id?: string }) => {
+    return isSectionHidden(item.path || item.href || item.id || '');
+  };
+
+  // Filter out hidden sections from navigation.
+  // Sections configured in the Section Control Center apply dynamically to ALL
+  // shop navigation regardless of role (no ADMIN/SUPER_ADMIN bypass), so
+  // `isSectionHidden` handles both SuperAdmin and Admin hidden lists.
+  const navItems = useMemo(() => {
+    const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+    
+    // SUPER_ADMIN without a shop (ecosystem view) sees their own admin nav untouched
+    if (isSuperAdmin && !user?.shop) {
+      return rawNavItems;
+    }
+    
+    // All shop users (ADMIN/MANAGER/STAFF) respect both hidden lists strictly.
+    
+    return rawNavItems
+      .filter(item => !isHidden(item))
+      .map(item => {
+        if (item.subItems) {
+          return {
+            ...item,
+            // Only show sub-items that are not hidden
+            subItems: item.subItems.filter(sub => !isHidden(sub))
+          };
+        }
+        return item;
+      })
+      // Remove parent items that have no visible sub-items
+      .filter(item => !item.subItems || item.subItems.length > 0);
+  }, [rawNavItems, user?.role, user?.shop, isSectionHidden, isHidden]);
+
+  // Bottom nav items - different for SUPER_ADMIN (when not viewing shop)
+  // Shop Admin features (Users, Branding, Sections) are now inside Settings page for both SHOP_ADMIN and SUPER_ADMIN viewing a shop
+  const rawBottomNavItems: NavItem[] = (user?.role === 'SUPER_ADMIN')
+    ? [
+        { path: '/settings', icon: Settings, label: 'Settings', badge: null },
+        { path: '/help', icon: HelpCircle, label: 'Help Center', badge: null },
+      ]
+    : [
+          // For SHOP_ADMIN and SUPER_ADMIN viewing a shop: Shop Admin tabs are inside Settings
+          { path: '/system/data-export', icon: Database, label: 'Data Export', badge: null },
+          { path: '/system/settings', icon: Settings, label: 'Settings', badge: null },
+          { path: '/system/help', icon: HelpCircle, label: 'Help Center', badge: null },
+        ];
+
+  // Filter hidden sections from bottom nav items.
+  // Sections configured in the Section Control Center apply universally to
+  // ALL shop navigation regardless of role (both hidden lists handled by
+  // `isSectionHidden`).
+  const bottomNavItems = useMemo(() => {
+    const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+    
+    // SUPER_ADMIN ecosystem view uses its own bottom nav untouched
+    if (isSuperAdmin && !user?.shop) {
+      return rawBottomNavItems;
+    }
+    
+    return rawBottomNavItems
+      .filter(item => !isHidden(item))
+      .map(item => {
+        if (item.subItems) {
+          return {
+            ...item,
+            subItems: item.subItems.filter(sub => !isHidden(sub))
+          };
+        }
+        return item;
+      })
+      // Remove parent items that have no visible sub-items
+      .filter(item => !item.subItems || item.subItems.length > 0);
+  }, [rawBottomNavItems, user?.role, user?.shop, isSectionHidden, isHidden]);
+
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
+  const isExactActive = (path: string) => location.pathname === path;
+  const isParentActive = (item: NavItem) => {
+    if (item.subItems) {
+      return item.subItems.some(sub => isActive(sub.path)) || isActive(item.path);
+    }
+    return isActive(item.path);
+  };
+
+  // Sidebar Component
+  const Sidebar = () => (
+    <aside
+      className={`fixed left-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-20' : 'w-72'
+        } ${theme === 'dark'
+          ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-r border-slate-800/50'
+          : 'bg-gradient-to-b from-white via-white to-slate-50 border-r border-slate-200 shadow-xl'
+        }`}
+    >
+      {/* Logo Section - Shop Branding */}
+      <div className={`flex items-center h-16 px-4 border-b ${theme === 'dark' ? 'border-slate-800/50' : 'border-slate-200'}`}>
+        <Link to="/system/dashboard" className="flex items-center gap-3 group">
+          {user?.role === 'SUPER_ADMIN' ? (
+            // SUPER_ADMIN not viewing a shop: Show Ecosystem branding
+            <>
+              <div className="relative flex-shrink-0">
+                <img src="/logo.png" alt="Eco System" className="w-10 h-10 object-contain" />
+              </div>
+              {!sidebarCollapsed && (
+                <div className="flex flex-col overflow-hidden">
+                  <span className={`text-base font-bold whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                    Eco System
+                  </span>
+                  <span className={`text-[9px] -mt-0.5 tracking-wider uppercase whitespace-nowrap ${theme === 'dark' ? 'text-white/70' : 'text-slate-600'}`}>
+                    NEBULAINFINITE
+                  </span>
+                </div>
+              )}
+            </>
+          ) : (
+            // Regular users OR SUPER_ADMIN viewing a shop: Show Shop branding
+            <>
+              <div className="relative flex-shrink-0">
+                {branding.logo ? (
+                  <img src={branding.logo} alt="Shop Logo" className="w-10 h-10 object-contain" />
+                ) : (
+                  <div className="relative w-10 h-10 rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+                    <Building className="w-6 h-6 text-white" />
+                  </div>
+                )}
+              </div>
+              {!sidebarCollapsed && (
+                <div className="flex flex-col overflow-hidden">
+                  <span className={`text-base font-bold whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                    {branding.name || 'Microvision Computers'}
+                  </span>
+                  {(branding.subName || 'Computers') && (
+                    <span className={`text-[9px] -mt-0.5 tracking-wider uppercase whitespace-nowrap ${theme === 'dark' ? 'text-white/70' : 'text-slate-600'}`}>
+                      {(branding.subName || 'Computers').toUpperCase()}
+                    </span>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+        </Link>
+      </div>
+
+      {/* Navigation */}
+      <nav ref={sidebarNavRef} className="flex flex-col h-[calc(100%-4rem)] px-3 py-4 overflow-y-auto overflow-x-hidden">
+        {/* Main Navigation */}
+        <div className="flex-1 space-y-1">
+          {!sidebarCollapsed && (
+            <span className={`px-3 text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+              Main Menu
+            </span>
+          )}
+          {/* Loading Skeleton for nav items */}
+          {sectionsLoading ? (
+            <div className="mt-2 space-y-2">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${
+                  theme === 'dark' ? 'bg-slate-800/30' : 'bg-slate-100'
+                }`}>
+                  <div className={`w-5 h-5 rounded ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'} animate-pulse`} />
+                  {!sidebarCollapsed && (
+                    <div className={`h-4 rounded flex-1 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'} animate-pulse`} />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : (
+          <div className="mt-2 space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const isExpanded = expandedMenus.includes(item.path);
+              const parentActive = isParentActive(item);
+              const exactActive = isExactActive(item.path);
+              const isItemDisabled = item.isDisabled;
+
+              return (
+                <div key={item.path} className="relative">
+                  {/* Parent Menu Item */}
+                  {hasSubItems ? (
+                    <div
+                      data-menu-id={item.path}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Allow interaction even for disabled items (SuperAdmin can navigate)
+                        if (sidebarCollapsed) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setPopoverPosition(rect.top);
+                          setCollapsedPopover(collapsedPopover === item.path ? null : item.path);
+                        } else {
+                          toggleMenu(item.path);
+                        }
+                      }}
+                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                        parentActive
+                          ? theme === 'dark'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400 shadow-lg shadow-blue-500/10 cursor-pointer'
+                            : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600 shadow-lg shadow-blue-500/10 cursor-pointer'
+                          : theme === 'dark'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-800/50 cursor-pointer'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer'
+                      }`}
+                      title={sidebarCollapsed ? item.label : undefined}
+                    >
+                      {/* Active indicator bar */}
+                      {parentActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      )}
+
+                      <Icon className={`w-5 h-5 flex-shrink-0 transition-transform ${
+                        parentActive 
+                          ? 'text-blue-500 group-hover:scale-110' 
+                          : 'group-hover:scale-110'
+                      }`} />
+
+                      {!sidebarCollapsed && (
+                        <>
+                          <span className="flex-1">
+                            {item.label}
+                          </span>
+                          {isItemDisabled && (
+                            <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${
+                              theme === 'dark'
+                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-amber-100 text-amber-700 border border-amber-200'
+                            }`}>
+                              Hidden
+                            </span>
+                          )}
+                          {item.badge && (
+                            <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${theme === 'dark'
+                                ? 'bg-blue-500/20 text-blue-400'
+                                : 'bg-blue-100 text-blue-600'
+                              }`}>
+                              {item.badge}
+                            </span>
+                          )}
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''
+                            } ${parentActive ? 'text-blue-500' : ''}`} />
+                        </>
+                      )}
+
+                      {/* Click-based Popover for collapsed sidebar with sub-items */}
+                      {sidebarCollapsed && collapsedPopover === item.path && (
+                        <div
+                          ref={popoverRef}
+                          className={`fixed left-[84px] px-0 py-2 rounded-xl text-sm font-medium whitespace-nowrap z-[100] min-w-[200px] shadow-2xl animate-in fade-in slide-in-from-left-2 zoom-in-95 duration-200 ${theme === 'dark' ? 'bg-slate-800/95 backdrop-blur-xl text-white border border-slate-700/50' : 'bg-white/95 backdrop-blur-xl text-slate-900 border border-slate-200'
+                            }`}
+                          style={{
+                            top: `${Math.min(popoverPosition, window.innerHeight - 280)}px`
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {/* Arrow Pointer */}
+                          <div className={`absolute -left-2 top-4 w-0 h-0 border-y-8 border-y-transparent border-r-8 ${theme === 'dark' ? 'border-r-slate-700/50' : 'border-r-slate-200'
+                            }`} />
+                          <div className={`absolute -left-[6px] top-4 w-0 h-0 border-y-8 border-y-transparent border-r-8 ${theme === 'dark' ? 'border-r-slate-800/95' : 'border-r-white/95'
+                            }`} />
+
+                          {/* Popover Header */}
+                          <div className={`px-4 py-2.5 border-b ${theme === 'dark' ? 'border-slate-700/50' : 'border-slate-200'}`}>
+                            <div className="flex items-center gap-2">
+                              <div className={`p-1.5 rounded-lg ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
+                                <Icon className="w-4 h-4 text-blue-500" />
+                              </div>
+                              <span className="font-semibold">{item.label}</span>
+                            </div>
+                          </div>
+
+                          {/* Sub Items */}
+                          <div className="mt-1 mx-2">
+                            {item.subItems?.map((subItem) => {
+                              const SubIcon = subItem.icon;
+                              const subActive = isActive(subItem.path);
+                              return (
+                                <Link
+                                  key={subItem.path}
+                                  to={subItem.path}
+                                  className={`flex items-center gap-2 px-2 py-2 rounded-lg transition-colors ${subActive
+                                      ? theme === 'dark' ? 'text-blue-400 bg-blue-500/20' : 'text-blue-600 bg-blue-50'
+                                      : theme === 'dark' ? 'hover:bg-slate-700 text-slate-300' : 'hover:bg-slate-100 text-slate-600'
+                                    }`}
+                                  onClick={() => setCollapsedPopover(null)}
+                                >
+                                  <SubIcon className={`w-4 h-4 ${subActive ? 'text-blue-500' : ''}`} />
+                                  {subItem.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200 ${exactActive
+                          ? theme === 'dark'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400 shadow-lg shadow-blue-500/10'
+                            : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600 shadow-lg shadow-blue-500/10'
+                          : theme === 'dark'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      title={sidebarCollapsed ? item.label : undefined}
+                    >
+                      {/* Active indicator bar */}
+                      {exactActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      )}
+
+                      <Icon className={`w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110 ${exactActive ? 'text-blue-500' : ''
+                        }`} />
+
+                      {!sidebarCollapsed && (
+                        <>
+                          <span className="flex-1">{item.label}</span>
+                          {isItemDisabled && (
+                            <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${
+                              theme === 'dark'
+                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-amber-100 text-amber-700 border border-amber-200'
+                            }`}>
+                              Hidden
+                            </span>
+                          )}
+                          {item.badge && (
+                            <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${theme === 'dark'
+                                ? 'bg-blue-500/20 text-blue-400'
+                                : 'bg-blue-100 text-blue-600'
+                              }`}>
+                              {item.badge}
+                            </span>
+                          )}
+                        </>
+                      )}
+
+                      {/* Tooltip for collapsed sidebar */}
+                      {sidebarCollapsed && (
+                        <div className={`absolute left-full ml-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 ${theme === 'dark' ? 'bg-slate-800 text-white shadow-xl' : 'bg-slate-900 text-white shadow-xl'
+                          }`}>
+                          {item.label}
+                          {item.badge && (
+                            <span className="ml-2 px-1.5 py-0.5 text-[10px] bg-blue-500 text-white rounded-full">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </Link>
+                  )}
+
+                  {/* Sub Items - Expanded Desktop */}
+                  {hasSubItems && isExpanded && !sidebarCollapsed && (
+                    <div className={`ml-4 mt-1 pl-4 border-l-2 space-y-1 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+                      }`}>
+                      {item.subItems?.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        const subActive = isActive(subItem.path);
+                        const isSubDisabled = subItem.isDisabled;
+                        
+                        return (
+                          <Link
+                            key={subItem.path}
+                            to={subItem.path}
+                            className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${subActive
+                                ? theme === 'dark'
+                                  ? 'bg-blue-500/10 text-blue-400'
+                                  : 'bg-blue-50 text-blue-600'
+                                : theme === 'dark'
+                                  ? 'text-slate-400 hover:text-white hover:bg-slate-800/30'
+                                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                              }`}
+                          >
+                            {subActive && (
+                              <div className={`absolute -left-[18px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${theme === 'dark' ? 'bg-blue-500' : 'bg-blue-500'
+                                }`} />
+                            )}
+                            <SubIcon className={`w-4 h-4 flex-shrink-0 ${subActive ? 'text-blue-500' : ''}`} />
+                            <span className="flex-1">{subItem.label}</span>
+                            {subItem.badge && (
+                              <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full min-w-[20px] text-center ${
+                                theme === 'dark'
+                                  ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                                  : 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 border border-blue-200'
+                              }`}>
+                                {subItem.badge}
+                              </span>
+                            )}
+                            {isSubDisabled && (
+                              <span className={`px-1.5 py-0.5 text-[9px] font-medium rounded-full ${
+                                theme === 'dark'
+                                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                  : 'bg-amber-100 text-amber-700 border border-amber-200'
+                              }`}>
+                                Hidden
+                              </span>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          )}
+        </div>
+
+        {/* Bottom Section */}
+        <div className="pt-4 space-y-1 border-t border-slate-800/30">
+          {!sidebarCollapsed && (
+            <span className={`px-3 text-[10px] font-semibold uppercase tracking-wider ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+              Support
+            </span>
+          )}
+          <div className="mt-2 space-y-1">
+            {bottomNavItems.map((item) => {
+              const Icon = item.icon;
+              const hasSubItems = item.subItems && item.subItems.length > 0;
+              const isExpanded = expandedMenus.includes(item.path);
+              const parentActive = isParentActive(item);
+              const exactActive = isExactActive(item.path);
+              const isBottomItemDisabled = item.isDisabled;
+
+              return (
+                <div key={item.path} className="relative">
+                  {hasSubItems ? (
+                    <div
+                      data-menu-id={item.path}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Allow interaction even for disabled items (SuperAdmin can navigate)
+                        if (sidebarCollapsed) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setPopoverPosition(rect.top);
+                          setCollapsedPopover(collapsedPopover === item.path ? null : item.path);
+                        } else {
+                          toggleMenu(item.path);
+                        }
+                      }}
+                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                        parentActive
+                          ? theme === 'dark'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400 shadow-lg shadow-blue-500/10 cursor-pointer'
+                            : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600 shadow-lg shadow-blue-500/10 cursor-pointer'
+                          : theme === 'dark'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-800/50 cursor-pointer'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer'
+                      }`}
+                      title={sidebarCollapsed ? item.label : undefined}
+                    >
+                      {parentActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      )}
+
+                      <Icon className={`w-5 h-5 flex-shrink-0 transition-transform ${
+                        parentActive ? 'text-blue-500 group-hover:scale-110' : 'group-hover:scale-110'
+                      }`} />
+
+                      {!sidebarCollapsed && (
+                        <>
+                          <span className="flex-1">{item.label}</span>
+                          {isBottomItemDisabled && (
+                            <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${
+                              theme === 'dark'
+                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-amber-100 text-amber-700 border border-amber-200'
+                            }`}>Hidden</span>
+                          )}
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''} ${parentActive ? 'text-blue-500' : ''}`} />
+                        </>
+                      )}
+
+                      {/* Click-based Popover for collapsed sidebar with sub-items */}
+                      {sidebarCollapsed && collapsedPopover === item.path && (
+                        <div
+                          ref={popoverRef}
+                          className={`fixed left-[84px] px-0 py-2 rounded-xl text-sm font-medium whitespace-nowrap z-[100] min-w-[200px] shadow-2xl animate-in fade-in slide-in-from-left-2 zoom-in-95 duration-200 ${theme === 'dark' ? 'bg-slate-800/95 backdrop-blur-xl text-white border border-slate-700/50' : 'bg-white/95 backdrop-blur-xl text-slate-900 border border-slate-200'}`}
+                          style={{
+                            top: `${Math.min(popoverPosition, window.innerHeight - 280)}px`
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className={`absolute -left-2 top-4 w-0 h-0 border-y-8 border-y-transparent border-r-8 ${theme === 'dark' ? 'border-r-slate-700/50' : 'border-r-slate-200'}`} />
+                          <div className={`absolute -left-[6px] top-4 w-0 h-0 border-y-8 border-y-transparent border-r-8 ${theme === 'dark' ? 'border-r-slate-800/95' : 'border-r-white/95'}`} />
+
+                          <div className={`px-4 py-2.5 border-b ${theme === 'dark' ? 'border-slate-700/50' : 'border-slate-200'}`}>
+                            <div className="flex items-center gap-2">
+                              <div className={`p-1.5 rounded-lg ${theme === 'dark' ? 'bg-blue-500/20' : 'bg-blue-50'}`}>
+                                <Icon className="w-4 h-4 text-blue-500" />
+                              </div>
+                              <span className="font-semibold">{item.label}</span>
+                            </div>
+                          </div>
+
+                          <div className="mt-1 mx-2">
+                            {item.subItems?.map((subItem) => {
+                              const SubIcon = subItem.icon;
+                              const subActive = isActive(subItem.path);
+                              return (
+                                <Link
+                                  key={subItem.path}
+                                  to={subItem.path}
+                                  className={`flex items-center gap-2 px-2 py-2 rounded-lg transition-colors ${subActive
+                                      ? theme === 'dark' ? 'text-blue-400 bg-blue-500/20' : 'text-blue-600 bg-blue-50'
+                                      : theme === 'dark' ? 'hover:bg-slate-700 text-slate-300' : 'hover:bg-slate-100 text-slate-600'
+                                    }`}
+                                  onClick={() => setCollapsedPopover(null)}
+                                >
+                                  <SubIcon className={`w-4 h-4 ${subActive ? 'text-blue-500' : ''}`} />
+                                  {subItem.label}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      to={item.path}
+                      className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all duration-200 ${exactActive
+                          ? theme === 'dark'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400 shadow-lg shadow-blue-500/10'
+                            : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600 shadow-lg shadow-blue-500/10'
+                          : theme === 'dark'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                      title={sidebarCollapsed ? item.label : undefined}
+                    >
+                      {exactActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      )}
+                      <Icon className={`w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-110 ${exactActive ? 'text-blue-500' : ''}`} />
+                      {!sidebarCollapsed && (
+                        <>
+                          <span className="flex-1">{item.label}</span>
+                          {isBottomItemDisabled && (
+                            <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${
+                              theme === 'dark'
+                                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                : 'bg-amber-100 text-amber-700 border border-amber-200'
+                            }`}>Hidden</span>
+                          )}
+                        </>
+                      )}
+
+                      {sidebarCollapsed && (
+                        <div className={`absolute left-full ml-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 ${theme === 'dark' ? 'bg-slate-800 text-white shadow-xl' : 'bg-slate-900 text-white shadow-xl'}`}>
+                          {item.label}
+                        </div>
+                      )}
+                    </Link>
+                  )}
+
+                  {/* Sub Items - Expanded Desktop */}
+                  {hasSubItems && isExpanded && !sidebarCollapsed && (
+                    <div className={`ml-4 mt-1 pl-4 border-l-2 space-y-1 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+                      {item.subItems?.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        const subActive = isActive(subItem.path);
+                        const isSubDisabled = subItem.isDisabled;
+                        
+                        return (
+                          <Link
+                            key={subItem.path}
+                            to={subItem.path}
+                            className={`group relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${subActive
+                                ? theme === 'dark'
+                                  ? 'bg-blue-500/10 text-blue-400'
+                                  : 'bg-blue-50 text-blue-600'
+                                : theme === 'dark'
+                                  ? 'text-slate-400 hover:text-white hover:bg-slate-800/30'
+                                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                              }`}
+                          >
+                            {subActive && (
+                              <div className={`absolute -left-[18px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full ${theme === 'dark' ? 'bg-blue-500' : 'bg-blue-500'}`} />
+                            )}
+                            <SubIcon className={`w-4 h-4 flex-shrink-0 ${subActive ? 'text-blue-500' : ''}`} />
+                            <span className="flex-1">{subItem.label}</span>
+                            {subItem.badge && (
+                              <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full min-w-[20px] text-center ${
+                                theme === 'dark'
+                                  ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                                  : 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 border border-blue-200'
+                              }`}>
+                                {subItem.badge}
+                              </span>
+                            )}
+                            {isSubDisabled && (
+                              <span className={`px-1.5 py-0.5 text-[9px] font-medium rounded-full ${
+                                theme === 'dark'
+                                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                  : 'bg-amber-100 text-amber-700 border border-amber-200'
+                              }`}>
+                                Hidden
+                              </span>
+                            )}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Collapse Button */}
+        {!isMobile && (
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className={`mt-4 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl transition-all ${theme === 'dark'
+                ? 'bg-slate-800/30 hover:bg-slate-800/50 text-slate-400'
+                : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
+              }`}
+          >
+            {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            {!sidebarCollapsed && <span className="text-sm">Collapse</span>}
+          </button>
+        )}
+      </nav>
+    </aside>
+  );
+
+  // Mobile Sidebar Overlay
+  const MobileSidebar = () => (
+    <>
+      {/* Backdrop */}
+      <div
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300 ${mobileSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        onClick={() => setMobileSidebarOpen(false)}
+      />
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed left-0 top-0 z-50 h-screen w-72 transition-transform duration-300 ease-in-out ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          } ${theme === 'dark'
+            ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950'
+            : 'bg-white'
+          }`}
+      >
+        {/* Close button */}
+        <button
+          onClick={() => setMobileSidebarOpen(false)}
+          className={`absolute right-4 top-4 p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
+            }`}
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Logo - Shop Branding / Ecosystem Branding */}
+        <div className="flex items-center gap-3 px-6 h-16">
+          {user?.role === 'SUPER_ADMIN' ? (
+            // SUPER_ADMIN: Show Ecosystem branding
+            <>
+              <div className="flex-shrink-0">
+                <img src='logo.png' alt="Eco System" className="w-10 h-10 object-contain" />
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-base font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  Eco System
+                </span>
+                <span className={`text-[9px] -mt-0.5 tracking-wider uppercase ${theme === 'dark' ? 'text-white/70' : 'text-slate-600'}`}>
+                  NEBULAINFINITE
+                </span>
+              </div>
+            </>
+          ) : (
+            // Regular users: Show Shop branding
+            <>
+              <div className="flex-shrink-0">
+                {branding.logo ? (
+                  <img src={branding.logo} alt="Shop Logo" className="w-10 h-10 object-contain" />
+                ) : (
+                  <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+                    <Building className="w-6 h-6 text-white" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col">
+                <span className={`text-base font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  {branding.name || 'Microvision Computers'}
+                </span>
+                {(branding.subName || 'Computers') && (
+                  <span className={`text-[9px] -mt-0.5 tracking-wider uppercase ${theme === 'dark' ? 'text-white/70' : 'text-slate-600'}`}>
+                    {(branding.subName || 'Computers').toUpperCase()}
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Navigation */}
+        <nav ref={mobileSidebarNavRef} className="px-3 py-4 space-y-1 overflow-y-auto max-h-[calc(100vh-5rem)]">
+          {/* Loading Skeleton for mobile nav */}
+          {sectionsLoading ? (
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${
+                  theme === 'dark' ? 'bg-slate-800/30' : 'bg-slate-100'
+                }`}>
+                  <div className={`w-5 h-5 rounded ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'} animate-pulse`} />
+                  <div className={`h-4 rounded flex-1 ${theme === 'dark' ? 'bg-slate-700' : 'bg-slate-200'} animate-pulse`} />
+                </div>
+              ))}
+            </div>
+          ) : (
+          <>
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const isExpanded = expandedMenus.includes(item.path);
+            const parentActive = isParentActive(item);
+            const exactActive = isExactActive(item.path);
+
+            return (
+              <div key={item.path}>
+                {hasSubItems ? (
+                  <>
+                    <div
+                      onClick={() => toggleMenu(item.path)}
+                      className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all cursor-pointer ${parentActive
+                          ? theme === 'dark'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400'
+                            : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600'
+                          : theme === 'dark'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                    >
+                      {parentActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      )}
+                      <Icon className={`w-5 h-5 ${parentActive ? 'text-blue-500' : ''}`} />
+                      <span className="flex-1">
+                        {item.label}
+                      </span>
+                      {item.badge && (
+                        <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+                          }`}>
+                          {item.badge}
+                        </span>
+                      )}
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''
+                        } ${parentActive ? 'text-blue-500' : ''}`} />
+                    </div>
+
+                    {/* Sub Items */}
+                    {isExpanded && (
+                      <div className={`ml-4 mt-1 pl-4 border-l-2 space-y-1 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+                        }`}>
+                        {item.subItems?.map((subItem) => {
+                          const SubIcon = subItem.icon;
+                          const subActive = isActive(subItem.path);
+                          return (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              onClick={() => setMobileSidebarOpen(false)}
+                              className={`relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${subActive
+                                  ? theme === 'dark'
+                                    ? 'bg-blue-500/10 text-blue-400'
+                                    : 'bg-blue-50 text-blue-600'
+                                  : theme === 'dark'
+                                    ? 'text-slate-400 hover:text-white hover:bg-slate-800/30'
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                }`}
+                            >
+                              {subActive && (
+                                <div className={`absolute -left-[18px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-500`} />
+                              )}
+                              <SubIcon className={`w-4 h-4 ${subActive ? 'text-blue-500' : ''}`} />
+                              <span className="flex-1">{subItem.label}</span>
+                              {subItem.badge && (
+                                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full min-w-[20px] text-center ${
+                                  theme === 'dark'
+                                    ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                                    : 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 border border-blue-200'
+                                }`}>
+                                  {subItem.badge}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    to={item.path}
+                    onClick={() => setMobileSidebarOpen(false)}
+                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all ${exactActive
+                        ? theme === 'dark'
+                          ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400'
+                          : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600'
+                        : theme === 'dark'
+                          ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                  >
+                    {exactActive && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                    )}
+                    <Icon className={`w-5 h-5 ${exactActive ? 'text-blue-500' : ''}`} />
+                    <span className="flex-1">{item.label}</span>
+                    {item.badge && (
+                      <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-600'
+                        }`}>
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+          </>
+          )}
+
+          <div className={`my-4 border-t ${theme === 'dark' ? 'border-slate-800' : 'border-slate-200'}`} />
+
+          {bottomNavItems.map((item) => {
+            const Icon = item.icon;
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            const isExpanded = expandedMenus.includes(item.path);
+            const parentActive = isParentActive(item);
+            const exactActive = isExactActive(item.path);
+
+            return (
+              <div key={item.path}>
+                {hasSubItems ? (
+                  <>
+                    <div
+                      onClick={() => toggleMenu(item.path)}
+                      className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all cursor-pointer ${parentActive
+                          ? theme === 'dark'
+                            ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400'
+                            : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600'
+                          : theme === 'dark'
+                            ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                        }`}
+                    >
+                      {parentActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                      )}
+                      <Icon className={`w-5 h-5 ${parentActive ? 'text-blue-500' : ''}`} />
+                      <span className="flex-1">{item.label}</span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''} ${parentActive ? 'text-blue-500' : ''}`} />
+                    </div>
+
+                    {/* Sub Items */}
+                    {isExpanded && (
+                      <div className={`ml-4 mt-1 pl-4 border-l-2 space-y-1 ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`}>
+                        {item.subItems?.map((subItem) => {
+                          const SubIcon = subItem.icon;
+                          const subActive = isActive(subItem.path);
+                          return (
+                            <Link
+                              key={subItem.path}
+                              to={subItem.path}
+                              onClick={() => setMobileSidebarOpen(false)}
+                              className={`relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${subActive
+                                  ? theme === 'dark'
+                                    ? 'bg-blue-500/10 text-blue-400'
+                                    : 'bg-blue-50 text-blue-600'
+                                  : theme === 'dark'
+                                    ? 'text-slate-400 hover:text-white hover:bg-slate-800/30'
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                }`}
+                            >
+                              {subActive && (
+                                <div className={`absolute -left-[18px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-blue-500`} />
+                              )}
+                              <SubIcon className={`w-4 h-4 ${subActive ? 'text-blue-500' : ''}`} />
+                              <span className="flex-1">{subItem.label}</span>
+                              {subItem.badge && (
+                                <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full min-w-[20px] text-center ${
+                                  theme === 'dark'
+                                    ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 text-blue-400 border border-blue-500/30'
+                                    : 'bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-600 border border-blue-200'
+                                }`}>
+                                  {subItem.badge}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <Link
+                    to={item.path}
+                    onClick={() => setMobileSidebarOpen(false)}
+                    className={`relative flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all ${exactActive
+                        ? theme === 'dark'
+                          ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/10 text-blue-400'
+                          : 'bg-gradient-to-r from-blue-500/10 to-cyan-500/5 text-blue-600'
+                        : theme === 'dark'
+                          ? 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                  >
+                    {exactActive && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-r-full" />
+                    )}
+                    <Icon className={`w-5 h-5 ${exactActive ? 'text-blue-500' : ''}`} />
+                    <span>{item.label}</span>
+                  </Link>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+      </aside>
+    </>
+  );
+
+  return (
+    <div className={`min-h-screen overflow-x-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-[#0a0f1a]' : 'bg-slate-100'}`}>
+      {/* Ambient background effects - only in dark mode */}
+      <div className={`fixed inset-0 overflow-hidden pointer-events-none transition-opacity duration-300 ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 -left-40 w-80 h-80 bg-blue-500/10 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-40 right-1/3 w-72 h-72 bg-purple-500/10 rounded-full blur-[100px]" />
+      </div>
+
+      {/* Desktop Sidebar */}
+      {!isMobile && <Sidebar />}
+
+      {/* Mobile Sidebar */}
+      {isMobile && <MobileSidebar />}
+
+      {/* Main Content */}
+      <div className={`transition-all duration-300 ${!isMobile ? (sidebarCollapsed ? 'ml-20' : 'ml-72') : 'ml-0'}`}>
+        {/* Top Header */}
+        <header className={`sticky top-0 z-30 h-16 border-b backdrop-blur-xl transition-colors duration-300 ${theme === 'dark' ? 'border-slate-800/50 bg-[#0a0f1a]/80' : 'border-slate-200 bg-white/90'
+          }`}>
+          <div className="flex items-center justify-between h-full px-4 lg:px-6">
+            {/* Left side */}
+            <div className="flex items-center gap-3 lg:gap-4">
+              {isMobile && (
+                <button
+                  onClick={() => setMobileSidebarOpen(true)}
+                  className={`p-2 rounded-lg ${theme === 'dark' ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-600'
+                    }`}
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
+              )}
+
+              {/* Search Bar - Full on desktop (lg+) */}
+              <div className={`hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl border ${theme === 'dark'
+                  ? 'bg-slate-800/30 border-slate-700/50'
+                  : 'bg-white border-slate-200'
+                }`}>
+                <Search className={`w-4 h-4 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`} />
+                <input
+                  type="text"
+                  placeholder="Search products, invoices..."
+                  className={`bg-transparent border-none outline-none w-64 text-sm ${theme === 'dark' ? 'text-white placeholder-slate-500' : 'text-slate-900 placeholder-slate-400'
+                    }`}
+                />
+              </div>
+
+              {/* Search Icon Button - Tablet & Mobile (before lg) */}
+              <div className="relative flex lg:hidden" ref={searchPopupRef}>
+                <button
+                  onClick={() => { setSearchPopupOpen(!searchPopupOpen); setTimeout(() => searchInputRef.current?.focus(), 100); }}
+                  className={`p-2.5 rounded-xl border transition-all ${searchPopupOpen
+                    ? theme === 'dark'
+                      ? 'bg-blue-500/20 border-blue-500/30 text-blue-400'
+                      : 'bg-blue-50 border-blue-200 text-blue-600'
+                    : theme === 'dark'
+                      ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-700/50 text-slate-400'
+                      : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-600'
+                  }`}
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+
+                {/* Search Popup */}
+                {searchPopupOpen && (
+                  <div className={`absolute top-full left-0 mt-2 w-80 rounded-xl border shadow-2xl overflow-hidden z-50 ${theme === 'dark'
+                    ? 'bg-slate-900 border-slate-700/50'
+                    : 'bg-white border-slate-200'
+                  }`}>
+                    <div className="p-3">
+                      <div className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border ${theme === 'dark'
+                        ? 'bg-slate-800/50 border-slate-700/50'
+                        : 'bg-slate-50 border-slate-200'
+                      }`}>
+                        <Search className={`w-4 h-4 flex-shrink-0 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'}`} />
+                        <input
+                          ref={searchInputRef}
+                          type="text"
+                          placeholder="Search products, invoices..."
+                          className={`bg-transparent border-none outline-none w-full text-sm ${theme === 'dark' ? 'text-white placeholder-slate-500' : 'text-slate-900 placeholder-slate-400'}`}
+                        />
+                        <button
+                          onClick={() => setSearchPopupOpen(false)}
+                          className={`p-1 rounded-md transition-colors ${theme === 'dark' ? 'hover:bg-slate-700 text-slate-400' : 'hover:bg-slate-200 text-slate-500'}`}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <p className={`text-[10px] mt-2 px-1 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-400'}`}>
+                        Type to search across products, invoices, customers...
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Center spacer - branding removed */}
+            <div className="flex-1" />
+
+            {/* Right side */}
+            <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
+              {/* Pro Badge - hidden on tablet for space */}
+              <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full border border-blue-500/20">
+                <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                <span className="text-xs font-medium text-blue-400">Pro</span>
+              </div>
+
+              {/* Notifications */}
+              <button className={`relative p-2.5 rounded-xl border transition-all ${theme === 'dark'
+                  ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-700/50 text-slate-400'
+                  : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-600'
+                }`}>
+                <Bell className="w-5 h-5" />
+                {notificationCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {notificationCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className={`relative p-2.5 rounded-xl border transition-all ${theme === 'dark'
+                    ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-700/50'
+                    : 'bg-white border-slate-200 hover:bg-slate-50'
+                  }`}
+              >
+                <Sun className={`w-5 h-5 text-amber-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${theme === 'dark' ? 'opacity-0 rotate-90 scale-0' : 'opacity-100 rotate-0 scale-100'}`} />
+                <Moon className={`w-5 h-5 text-blue-400 transition-all duration-300 ${theme === 'dark' ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-0'}`} />
+              </button>
+
+              {/* AI Auto-Fill Toggle */}
+              <button
+                onClick={toggleAiAutoFill}
+                title={aiAutoFillEnabled ? 'AI Auto-Fill: ON' : 'AI Auto-Fill: OFF'}
+                className={`relative p-2.5 rounded-xl border transition-all group ${aiAutoFillEnabled
+                    ? theme === 'dark'
+                      ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30'
+                      : 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 hover:from-blue-100 hover:to-cyan-100'
+                    : theme === 'dark'
+                      ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-700/50'
+                      : 'bg-white border-slate-200 hover:bg-slate-50'
+                  }`}
+              >
+                <div className="relative">
+                  <Brain className={`w-5 h-5 transition-colors ${aiAutoFillEnabled
+                      ? 'text-blue-500'
+                      : theme === 'dark' ? 'text-slate-500' : 'text-slate-400'
+                    }`} />
+                  {aiAutoFillEnabled && (
+                    <Zap className="w-2.5 h-2.5 text-amber-400 absolute -top-1 -right-1" />
+                  )}
+                </div>
+                {/* Tooltip */}
+                <div className={`absolute top-full mt-2 right-0 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 ${theme === 'dark' ? 'bg-slate-800 text-white shadow-xl border border-slate-700' : 'bg-slate-900 text-white shadow-xl'
+                  }`}>
+                  <div className="flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${aiAutoFillEnabled ? 'bg-blue-500' : 'bg-slate-500'}`} />
+                    AI Auto-Fill: {aiAutoFillEnabled ? 'ON' : 'OFF'}
+                  </div>
+                  <p className={`mt-1 text-[10px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-300'}`}>
+                    Click to {aiAutoFillEnabled ? 'disable' : 'enable'}
+                  </p>
+                </div>
+              </button>
+
+              {/* Profile Dropdown */}
+              <div className="relative z-50">
+                <button
+                  onClick={(e) => { e.stopPropagation(); setProfileDropdownOpen(!profileDropdownOpen); }}
+                  className={`flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-xl border transition-all ${theme === 'dark'
+                      ? 'bg-slate-800/30 border-slate-700/50 hover:bg-slate-700/50'
+                      : 'bg-white border-slate-200 hover:bg-slate-50'
+                    }`}
+                >
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center flex-shrink-0">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="hidden md:block text-left min-w-0">
+                    <p className={`text-sm font-medium truncate max-w-[80px] lg:max-w-[120px] ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{user?.role || 'User'}</p>
+                    <p className={`text-xs truncate max-w-[80px] lg:max-w-[120px] ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{user?.shop?.name || 'No Shop'}</p>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${profileDropdownOpen ? 'rotate-180' : ''} ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`} />
+                </button>
+
+                {/* Dropdown Menu */}
+                {profileDropdownOpen && (
+                  <div className={`absolute right-0 top-full mt-2 w-56 rounded-xl border shadow-xl overflow-hidden ${theme === 'dark' ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'
+                    }`}>
+                    <div className={`px-4 py-3 border-b ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}>
+                      <p className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>{user?.name || 'User'}</p>
+                      <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>{user?.email || 'user@email.com'}</p>
+                      {user?.shop && (
+                        <p className={`text-xs mt-1 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>{user.shop.name}</p>
+                      )}
+                    </div>
+                    <div className="py-2">
+                      <Link to="/system/settings" className={`flex items-center gap-3 px-4 py-2 text-sm ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-50'
+                        }`}>
+                        <Settings className="w-4 h-4" />
+                        Settings
+                      </Link>
+                      <Link to="/system/help" className={`flex items-center gap-3 px-4 py-2 text-sm ${theme === 'dark' ? 'text-slate-300 hover:bg-slate-800' : 'text-slate-700 hover:bg-slate-50'
+                        }`}>
+                        <HelpCircle className="w-4 h-4" />
+                        Help & Support
+                      </Link>
+                      <div className={`border-t my-2 ${theme === 'dark' ? 'border-slate-800' : 'border-slate-100'}`}></div>
+                      <button 
+                        onClick={handleLogout}
+                        className={`flex items-center gap-3 px-4 py-2 text-sm w-full ${theme === 'dark' ? 'text-red-400 hover:bg-slate-800' : 'text-red-600 hover:bg-red-50'
+                        }`}>
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Removed: Viewing Shop Banner (multi-tenant feature deprecated) */}
+
+        {/* Page Content */}
+        <main className="p-4 lg:p-6">
+          {children}
+        </main>
+      </div>
+
+      {/* AI Assistant - Floating Chat */}
+      <AIAssistant />
+    </div>
+  );
+};

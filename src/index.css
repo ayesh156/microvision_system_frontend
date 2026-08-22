@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Dynamic accent colour CSS custom properties ──────────────────────────
+  These override Tailwind's `emerald-*` and `teal-*` colour scales.
+  ThemeContext.tsx updates them at runtime when the user picks an accent.
+  Default = electric blue / cyan.                                          */
+:root {
+  /* Primary accent (mapped to Tailwind "emerald-*") */
+  --accent-50:  239 246 255;
+  --accent-100: 219 234 254;
+  --accent-200: 191 219 254;
+  --accent-300: 147 197 253;
+  --accent-400: 96 165 250;
+  --accent-500: 59 130 246;
+  --accent-600: 37 99 235;
+  --accent-700: 29 78 216;
+  --accent-800: 30 64 175;
+  --accent-900: 30 58 138;
+  --accent-950: 23 37 84;
+
+  /* Secondary accent – gradient endpoint (mapped to Tailwind "teal-*") */
+  --accent2-50:  236 254 255;
+  --accent2-100: 207 250 254;
+  --accent2-200: 165 243 252;
+  --accent2-300: 103 232 249;
+  --accent2-400: 34 211 238;
+  --accent2-500: 6 182 212;
+  --accent2-600: 8 145 178;
+  --accent2-700: 14 116 144;
+  --accent2-800: 21 94 117;
+  --accent2-900: 22 78 99;
+  --accent2-950: 8 51 68;
+
+  --primary: 221 83% 53%;
+  --ring: 221 83% 53%;
+  --accent: 189 94% 43%;
+}
+
+html, body, #root {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #111827;
+}
+
+/* Shimmer animation for loading skeletons */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area padding for mobile bottom bars */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
