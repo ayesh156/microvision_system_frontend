@@ -21,7 +21,6 @@ export interface InvoiceBranding {
   address?: string;
   phone?: string;
   email?: string;
-  tagline?: string;
 }
 
 interface PrintableInvoiceProps {
@@ -36,8 +35,8 @@ interface PrintableInvoiceProps {
 export const PrintableInvoice = forwardRef<HTMLDivElement, PrintableInvoiceProps>(
   ({ invoice, customer, branding }, ref) => {
     // Use branding values with fallbacks
-    const shopName = branding?.name || 'ECO SYSTEM COMPUTER';
-    const shopSubName = branding?.subName || 'SOLUTIONS';
+    const shopName = branding?.name || 'Microvision';
+    const shopSubName = branding?.subName || 'Computers';
     const hasCustomLogo = !!branding?.logo;
     const shopLogo = branding?.logo || '/logo.png';
     const shopAddress = branding?.address || 'Akuressa road, Makadura';
@@ -588,8 +587,8 @@ export const PrintableInvoice = forwardRef<HTMLDivElement, PrintableInvoiceProps
         {/* Invoice Title Section */}
         <div className="invoice-title-section">
           <div className="invoice-title">
-            <h2>{shopName.split(' ')[0]} INVOICE</h2>
-            <div className="company-label">{shopName} {shopSubName}</div>
+            <h2>{shopName.toUpperCase()} INVOICE</h2>
+            <div className="company-label">{shopSubName}</div>
           </div>
           <div className="amount-due">
             <label>Amount Due (LKR)</label>

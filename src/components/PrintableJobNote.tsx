@@ -10,7 +10,6 @@ export interface JobNoteBranding {
   address?: string;
   phone?: string;
   email?: string;
-  tagline?: string;
 }
 
 interface PrintableJobNoteProps {

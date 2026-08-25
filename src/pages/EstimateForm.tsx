@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useDataCache } from '../contexts/DataCacheContext';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
+import { useShopBranding } from '../contexts/ShopBrandingContext';
 import { toast } from 'sonner';
 import { estimateService, convertAPIEstimateToFrontend, type CreateEstimateData } from '../services/estimateService';
 import type { Product } from '../data/mockData';
@@ -111,6 +112,7 @@ const defaultTermsTemplates = [
 
 export const EstimateForm: React.FC = () => {
   const { theme } = useTheme();
+  const { branding: shopBranding } = useShopBranding();
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
@@ -1679,7 +1681,7 @@ export const EstimateForm: React.FC = () => {
 
       {/* Hidden Printable Component */}
       <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
-        <PrintableEstimate ref={printRef} estimate={getEstimateData()} />
+        <PrintableEstimate ref={printRef} estimate={getEstimateData()} branding={shopBranding} />
       </div>
 
       {/* Preview Modal */}
@@ -1715,7 +1717,7 @@ export const EstimateForm: React.FC = () => {
             </div>
             {/* Preview Content */}
             <div className="p-4 overflow-auto" style={{ transform: 'scale(0.85)', transformOrigin: 'top center' }}>
-              <PrintableEstimate estimate={getEstimateData()} />
+              <PrintableEstimate estimate={getEstimateData()} branding={shopBranding} />
             </div>
           </div>
         </div>

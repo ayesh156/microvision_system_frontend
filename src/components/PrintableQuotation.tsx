@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
-import { Building2 } from 'lucide-react';
+import { useShopBranding } from '../contexts/ShopBrandingContext';
+import { DocumentHeader } from './DocumentHeader';
 
 interface QuotationItem {
   id: string;
@@ -38,7 +39,6 @@ interface QuotationBranding {
   address?: string;
   phone?: string;
   email?: string;
-  tagline?: string;
   website?: string;
 }
 
@@ -49,16 +49,16 @@ interface PrintableQuotationProps {
 
 export const PrintableQuotation = forwardRef<HTMLDivElement, PrintableQuotationProps>(
   ({ quotation, branding }, ref) => {
-    // Use branding values with fallbacks
-    const shopName = branding?.name || 'Eco System';
-    const shopSubName = branding?.subName || '';
-    const hasCustomLogo = !!branding?.logo;
-    const shopLogo = branding?.logo || '/logo.png';
-    const shopPhone = branding?.phone || '0412268407 / 0774636561';
-    const shopEmail = branding?.email || 'info@microvision.lk';
-    const shopTagline = branding?.tagline || 'Computer Solutions';
-    const shopWebsite = branding?.website || 'www.microvision.lk';
-    const shopAddress = branding?.address || 'Akuressa road, Makadura';
+    const { branding: contextBranding } = useShopBranding();
+    const activeBranding = branding ?? contextBranding;
+
+    const shopName = activeBranding?.name || 'Microvision';
+    const shopSubName = activeBranding?.subName || 'Computers';
+    const shopLogo = activeBranding?.logo || '/logo.png';
+    const shopPhone = activeBranding?.phone || '0412268407 / 0774636561';
+    const shopEmail = activeBranding?.email || 'info@microvision.lk';
+    const shopWebsite = activeBranding?.website || '';
+    const shopAddress = activeBranding?.address || 'Akuressa road, Makadura';
 
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleDateString('en-GB', {
@@ -131,29 +131,40 @@ export const PrintableQuotation = forwardRef<HTMLDivElement, PrintableQuotationP
             margin-bottom: 15px;
           }
 
+          .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            margin-bottom: 8px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+          }
+
           .company-section {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
           }
 
           .company-logo {
-            width: 55px;
-            height: 55px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 2px solid #000;
-            background: #fff;
-            flex-shrink: 0;
-            overflow: hidden;
+            width: auto;
+            height: auto;
+            max-width: 120px;
+            max-height: 80px;
+            align-self: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: transparent;
+            flex-shrink: 0;
+            overflow: visible;
           }
 
           .company-logo img {
-            width: 100%;
-            height: 100%;
+            width: auto;
+            height: auto;
+            max-width: 120px;
+            max-height: 80px;
             object-fit: contain;
             display: block;
             -webkit-print-color-adjust: exact;
@@ -162,10 +173,11 @@ export const PrintableQuotation = forwardRef<HTMLDivElement, PrintableQuotationP
           }
 
           .company-info h1 {
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: 700;
             color: #000;
-            margin: 0;
+            margin: 0 0 1px 0;
+            letter-spacing: -0.3px;
           }
 
           .company-info .tagline {
@@ -176,10 +188,89 @@ export const PrintableQuotation = forwardRef<HTMLDivElement, PrintableQuotationP
             font-style: italic;
           }
 
+          .company-info .details {
+            font-size: 8pt;
+            color: #000;
+            line-height: 1.4;
+          }
+
           .company-info .contact {
             font-size: 7pt;
             color: #000;
             margin-top: 4px;
+          }
+
+          .contact-box {
+            text-align: right;
+          }
+
+          .contact-box h3 {
+            font-size: 9pt;
+            font-weight: 600;
+            color: #000;
+            margin: 0 0 4px 0;
+            text-decoration: underline;
+          }
+
+          .contact-box .info {
+            font-size: 8pt;
+            color: #000;
+            line-height: 1.5;
+          }
+
+          .document-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 18px;
+            margin-bottom: 15px;
+            background: white;
+            border: 2px solid #000;
+          }
+
+          .document-title h2 {
+            font-size: 18pt;
+            font-weight: 700;
+            color: #000;
+            margin: 0 0 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+
+          .company-label {
+            font-size: 8pt;
+            color: #000;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .amount-due {
+            text-align: right;
+          }
+
+          .amount-due label {
+            font-size: 8pt;
+            color: #000;
+            font-weight: 600;
+            text-decoration: underline;
+          }
+
+          .amount-due .amount {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #000;
+            font-family: 'Consolas', 'Monaco', monospace;
+          }
+
+          .meta-inline {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            font-size: 8pt;
+            color: #000;
+            margin-top: 4px;
+            flex-wrap: wrap;
           }
 
           .quotation-number-box {
@@ -562,49 +653,35 @@ export const PrintableQuotation = forwardRef<HTMLDivElement, PrintableQuotationP
           }
         `}</style>
 
-        {/* Header */}
-        <div className="quotation-header">
-          <div className="company-section">
-            <div className="company-logo">
-              {/* Always render the logo image; fall back to /logo.png on error.
-                  If even the fallback fails we hide the img and show the icon. */}
-              <img
-                src={shopLogo}
-                alt={`${shopName} ${shopSubName || ''} Logo`.trim()}
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  if (!hasCustomLogo && !img.src.endsWith('/logo.png')) {
-                    img.src = '/logo.png';
-                  } else {
-                    img.style.display = 'none';
-                  }
-                }}
-              />
-              {!hasCustomLogo && (
-                <Building2 className="w-8 h-8 text-slate-400" style={{ display: hasCustomLogo ? 'none' : 'block' }} />
-              )}
+        <DocumentHeader
+          branding={{
+            name: shopName,
+            subName: shopSubName,
+            logo: shopLogo,
+            address: shopAddress,
+            phone: shopPhone,
+            email: shopEmail,
+            website: shopWebsite,
+          }}
+          title="OFFICIAL QUOTATION"
+          subtitle={shopSubName}
+          documentNumber={quotation.quotationNumber}
+          issueDate={formatDate(quotation.quotationDate)}
+          expiryDate={formatDate(quotation.expiryDate)}
+          variant="quotation"
+          amountLabel="Total"
+          amount={formatCurrency(quotation.total)}
+          rightMeta={
+            <div className="amount-due">
+              <label>Quotation No</label>
+              <div className="amount">{quotation.quotationNumber}</div>
+              <div className="meta-inline">
+                <span>Issued: {formatDate(quotation.quotationDate)}</span>
+                <span>Valid: {formatDate(quotation.expiryDate)}</span>
+              </div>
             </div>
-            <div className="company-info">
-              <h1>{shopName}{shopSubName && ` ${shopSubName}`}</h1>
-              {shopTagline && <div className="tagline">{shopTagline}</div>}
-              <div className="contact">Tel: {shopPhone} | Email: {shopEmail}</div>
-              {shopAddress && <div className="contact">{shopAddress}</div>}
-            </div>
-          </div>
-          <div className="quotation-number-box">
-            <div className="label">Quotation No</div>
-            <div className="number">{quotation.quotationNumber}</div>
-            <div className="date">Date: {formatDate(quotation.quotationDate)}</div>
-          </div>
-        </div>
-
-        {/* Title Section */}
-        <div className="title-section">
-          <h2>OFFICIAL QUOTATION</h2>
-          <div className="validity-badge">
-            Valid Until: {formatDate(quotation.expiryDate)}
-          </div>
-        </div>
+          }
+        />
 
         {/* Customer & Quotation Info */}
         <div className="two-columns">
@@ -754,7 +831,7 @@ export const PrintableQuotation = forwardRef<HTMLDivElement, PrintableQuotationP
         <div className="quotation-footer">
           <div className="footer-message">Thank you for your interest in {shopName}!</div>
           <div className="footer-contact">
-            {shopAddress || 'Akuressa road, Makadura'} | {shopWebsite || 'www.microvision.lk'}
+            {shopAddress}{shopWebsite ? ` | ${shopWebsite}` : ''}
           </div>
           <div className="footer-disclaimer">
             This quotation is valid for the period mentioned above. Prices and availability are subject to change. 

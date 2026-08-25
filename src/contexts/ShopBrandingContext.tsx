@@ -38,14 +38,14 @@ interface ShopBrandingProviderProps {
 // Default branding values
 const DEFAULT_BRANDING: ShopBranding = {
   id: '',
-  name: 'Microvision Computers',
+  name: 'Microvision',
   subName: 'Computers',
   logo: undefined,
-  address: 'No.14, Mulatiyana junction, Mulatiyana, Matara.',
-  phone: '0711453111',
-  email: 'info@microvisioncomputers.com',
+  address: 'Akuressa road, Makadura',
+  phone: '0412268407 / 0774636561',
+  email: 'info@microvision.lk',
   website: '',
-  tagline: 'Computer Solutions',
+  tagline: 'Your Ultimate Tech Destination',
   themeMode: 'dark',
   accentColor: 'emerald',
 };

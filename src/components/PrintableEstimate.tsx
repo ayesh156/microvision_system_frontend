@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
-import { Building2 } from 'lucide-react';
 import { useShopBranding } from '../contexts/ShopBrandingContext';
+import { DocumentHeader } from './DocumentHeader';
 
 interface EstimateItem {
   id: string;
@@ -49,19 +49,16 @@ interface PrintableEstimateProps {
 
 export const PrintableEstimate = forwardRef<HTMLDivElement, PrintableEstimateProps>(
   ({ estimate, branding }, ref) => {
-    // Dynamic branding from ShopBrandingContext with prop overrides
     const { branding: contextBranding } = useShopBranding();
     const activeBranding = branding ?? contextBranding;
 
-    // Use branding values with fallbacks
-    const shopName = activeBranding?.name || 'Eco System';
-    const shopSubName = activeBranding?.subName || '';
-    const hasCustomLogo = !!activeBranding?.logo;
+    const shopName = activeBranding?.name || 'Microvision';
+    const shopSubName = activeBranding?.subName || 'Computers';
     const shopLogo = activeBranding?.logo || '/logo.png';
     const shopPhone = activeBranding?.phone || '0412268407 / 0774636561';
     const shopEmail = activeBranding?.email || 'info@microvision.lk';
-    const shopAddress = activeBranding?.address || '';
-    const shopWebsite = activeBranding?.website || 'www.microvision.lk';
+    const shopAddress = activeBranding?.address || 'Akuressa road, Makadura';
+    const shopWebsite = activeBranding?.website || '';
 
     // Sanitize estimate number - strip any existing EST- prefix to avoid doubles
     const sanitizedEstimateNumber = estimate.estimateNumber.replace(/^EST-EST-/i, 'EST-');
@@ -104,14 +101,13 @@ export const PrintableEstimate = forwardRef<HTMLDivElement, PrintableEstimatePro
       <div ref={ref} className="print-estimate">
         <style>{`
           /* ═══════════════════════════════════════════════════════════════
-             INK-EFFICIENT B&W PRINT OPTIMIZED - ECO SYSTEM ESTIMATE
-             Designed for black laser/inkjet printers to minimize ink usage
+             STANDARDIZED SHOP BRANDING HEADER - ESTIMATE
              ═══════════════════════════════════════════════════════════════ */
           
           @media print {
             @page {
               size: A4 portrait;
-              margin: 8mm 10mm;
+              margin: 10mm 12mm;
             }
             
             html, body {
@@ -161,40 +157,154 @@ export const PrintableEstimate = forwardRef<HTMLDivElement, PrintableEstimatePro
             margin-bottom: 15px;
           }
 
+          .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            margin-bottom: 8px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+          }
+
           .company-section {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
           }
 
           .company-logo {
-            width: 55px;
-            height: 55px;
-            border-radius: 8px;
-            border: 2px solid #000;
-            overflow: hidden;
-            object-fit: cover;
+            width: auto;
+            height: auto;
+            max-width: 120px;
+            max-height: 80px;
+            align-self: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            flex-shrink: 0;
+            overflow: visible;
           }
 
           .company-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: auto;
+            height: auto;
+            max-width: 120px;
+            max-height: 80px;
+            object-fit: contain;
+            display: block;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+            background: #fff;
           }
 
           .company-info h1 {
-            font-size: 18pt;
+            font-size: 16pt;
             font-weight: 700;
             color: #000;
-            margin: 0;
+            margin: 0 0 1px 0;
+            letter-spacing: -0.3px;
+          }
+
+          .company-info .tagline {
+            font-size: 8pt;
+            font-weight: 600;
+            color: #000;
+            margin-top: 1px;
+            font-style: italic;
+          }
+
+          .company-info .details {
+            font-size: 8pt;
+            color: #000;
+            line-height: 1.4;
           }
 
           .company-info .contact {
             font-size: 7pt;
             color: #000;
             margin-top: 4px;
+          }
+
+          .contact-box {
+            text-align: right;
+          }
+
+          .contact-box h3 {
+            font-size: 9pt;
+            font-weight: 600;
+            color: #000;
+            margin: 0 0 4px 0;
+            text-decoration: underline;
+          }
+
+          .contact-box .info {
+            font-size: 8pt;
+            color: #000;
+            line-height: 1.5;
+          }
+
+          .document-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 15px 18px;
+            margin-bottom: 15px;
+            background: white;
+            border: 2px solid #000;
+          }
+
+          .document-title h2 {
+            font-size: 18pt;
+            font-weight: 700;
+            color: #000;
+            margin: 0 0 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+
+          .company-label {
+            font-size: 8pt;
+            color: #000;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .amount-due {
+            text-align: right;
+          }
+
+          .amount-due label {
+            font-size: 8pt;
+            color: #000;
+            font-weight: 600;
+            text-decoration: underline;
+          }
+
+          .amount-due .amount {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #000;
+            font-family: 'Consolas', 'Monaco', monospace;
+          }
+
+          .meta-inline {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            font-size: 8pt;
+            color: #000;
+            margin-top: 4px;
+            flex-wrap: wrap;
+          }
+
+          .company-info .tagline {
+            font-size: 8pt;
+            font-weight: 600;
+            color: #000;
+            font-style: italic;
+            margin-top: 1px;
           }
 
           .estimate-number-box {
@@ -584,45 +694,35 @@ export const PrintableEstimate = forwardRef<HTMLDivElement, PrintableEstimatePro
           }
         `}</style>
 
-        {/* Header */}
-        <div className="estimate-header">
-          <div className="company-section">
-            <div className="company-logo">
-              {hasCustomLogo ? (
-                <img src={shopLogo} alt="Shop Logo" />
-              ) : (
-                <div style={{ 
-                  width: '70px', 
-                  height: '70px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  background: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
-                  borderRadius: '12px'
-                }}>
-                  <Building2 style={{ width: '40px', height: '40px', color: 'white', strokeWidth: 2 }} />
-                </div>
-              )}
+        <DocumentHeader
+          branding={{
+            name: shopName,
+            subName: shopSubName,
+            logo: shopLogo,
+            address: shopAddress,
+            phone: shopPhone,
+            email: shopEmail,
+            website: shopWebsite,
+          }}
+          title="PRICE ESTIMATE"
+          subtitle={shopSubName}
+          documentNumber={sanitizedEstimateNumber}
+          issueDate={formatDate(estimate.estimateDate)}
+          expiryDate={formatDate(estimate.expiryDate)}
+          variant="estimate"
+          amountLabel="Total"
+          amount={formatCurrency(grandTotal)}
+          rightMeta={
+            <div className="amount-due">
+              <label>Estimate No</label>
+              <div className="amount">{sanitizedEstimateNumber}</div>
+              <div className="meta-inline">
+                <span>Issued: {formatDate(estimate.estimateDate)}</span>
+                <span>Valid: {formatDate(estimate.expiryDate)}</span>
+              </div>
             </div>
-            <div className="company-info">
-              <h1>{shopName}{shopSubName && ` ${shopSubName}`}</h1>
-              <div className="contact">Tel: {shopPhone} | Email: {shopEmail}</div>
-            </div>
-          </div>
-          <div className="estimate-number-box">
-            <div className="label">Estimate No</div>
-            <div className="number">{sanitizedEstimateNumber}</div>
-            <div className="date">Date: {formatDate(estimate.estimateDate)}</div>
-          </div>
-        </div>
-
-        {/* Title Section */}
-        <div className="title-section">
-          <h2>PRICE ESTIMATE</h2>
-          <div className="validity-badge">
-            Valid Until: {formatDate(estimate.expiryDate)}
-          </div>
-        </div>
+          }
+        />
 
         {/* Customer & Estimate Info */}
         <div className="two-columns">
@@ -772,7 +872,7 @@ export const PrintableEstimate = forwardRef<HTMLDivElement, PrintableEstimatePro
         <div className="estimate-footer">
           <div className="footer-message">Thank you for considering Eco System!</div>
           <div className="footer-contact">
-            {shopAddress ? `${shopAddress} | ` : ''}{shopWebsite}
+            {shopAddress}{shopWebsite ? ` | ${shopWebsite}` : ''}
           </div>
           <div className="footer-disclaimer">
             This is a price estimate only. Final prices may vary based on availability and market conditions. 
