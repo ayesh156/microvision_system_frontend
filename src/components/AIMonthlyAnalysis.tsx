@@ -208,7 +208,7 @@ export const AIMonthlyAnalysis: React.FC = () => {
         singlish: 'Respond in Singlish (Sinhala words written in English letters mixed with English). Example: "Revenue eka hondai, Rs. 6.9 million wage tiyenawa". Use casual, friendly Sri Lankan style.',
       };
 
-      const prompt = `You are a world-class business analyst for ECOTEC Computer Shop in Sri Lanka. Analyze the following January 2026 business metrics and provide actionable insights.
+      const prompt = `You are a world-class business analyst for Microvision Computers in Sri Lanka. Analyze the following January 2026 business metrics and provide actionable insights.
 
 MONTHLY BUSINESS METRICS (January 2026):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

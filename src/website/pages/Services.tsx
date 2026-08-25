@@ -20,7 +20,7 @@ export default function Services() {
           Our <Box component="span" sx={{ color: '#2563eb' }}>Services</Box>
         </Typography>
         <Typography sx={{ color: '#9a9aa0', maxWidth: 700, margin: '0 auto', fontSize: '1.1rem', lineHeight: 1.6 }}>
-          Beyond selling premium hardware, Ecotec Computer Solutions provides top-tier technical services.
+          Beyond selling premium hardware, Microvision Computers provides top-tier technical services.
         </Typography>
       </Box>
       <Box sx={{ width: '100%', px: { xs: 2, sm: 4, md: 6, lg: 8 } }}>

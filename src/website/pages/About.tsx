@@ -23,7 +23,7 @@ export default function About() {
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <Box className="animate-slide-right" sx={{ position: 'relative', height: { xs: 300, md: 500 }, borderRadius: 4, overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,200,83,0.15)', border: '1px solid rgba(0,200,83,0.2)' }}>
-                <Box component="img" src="/hero-banner.png" alt="Ecotec Store" sx={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.8)' }} />
+                <Box component="img" src="/hero-banner.png" alt="Microvision Store" sx={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'brightness(0.8)' }} />
                 <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(10,10,12,0.9), transparent)' }} />
                 <Box sx={{ position: 'absolute', bottom: 30, left: 30 }}>
                   <Box sx={{ width: 60, height: 60, borderRadius: '50%', background: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>

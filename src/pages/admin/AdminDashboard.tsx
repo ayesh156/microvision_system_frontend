@@ -990,7 +990,7 @@ export const AdminDashboard: React.FC = () => {
                 { 
                   type: 'user_created', 
                   message: 'New user "John Doe" was created', 
-                  shop: 'Ecotec Mobile', 
+                  shop: 'Microvision Mobile', 
                   time: '2 minutes ago',
                   icon: UserPlus,
                   color: 'from-emerald-500 to-teal-500'
@@ -1014,7 +1014,7 @@ export const AdminDashboard: React.FC = () => {
                 { 
                   type: 'user_login', 
                   message: 'Admin user logged in', 
-                  shop: 'Ecotec Mobile', 
+                  shop: 'Microvision Mobile', 
                   time: '2 hours ago',
                   icon: LogIn,
                   color: 'from-amber-500 to-orange-500'

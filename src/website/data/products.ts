@@ -1,6 +1,5 @@
 // ============================================
-// ECOTEC COMPUTER SOLUTIONS - PRODUCT DATA
-// Ported from ecotec/src/data/products.js
+// MICROVISION COMPUTERS - PRODUCT DATA
 // ============================================
 
 export const categories = [
@@ -172,7 +171,7 @@ export const testimonials = [
     id: 1,
     name: 'Kasun Perera',
     role: 'Software Developer',
-    text: 'Ecotec eken laptop ekak gattata passe mage work experience eka pura ma change una. Best prices and excellent service!',
+    text: 'Microvision eken laptop ekak gattata passe mage work experience eka pura ma change una. Best prices and excellent service!',
     rating: 5,
     avatar: 'K',
   },
@@ -180,7 +179,7 @@ export const testimonials = [
     id: 2,
     name: 'Nadeesha Fernando',
     role: 'Graphic Designer',
-    text: 'Mage desktop build eka Ecotec ekema karanne. Components quality ekata best prices denawa. Highly recommend!',
+    text: 'Mage desktop build eka Microvision ekema karanne. Components quality ekata best prices denawa. Highly recommend!',
     rating: 5,
     avatar: 'N',
   },
@@ -188,7 +187,7 @@ export const testimonials = [
     id: 3,
     name: 'Chaminda Silva',
     role: 'Business Owner',
-    text: 'Office eke computers, printers, networking setup eka hari Ecotec eken karala. Professional service and after-sales support.',
+    text: 'Office eke computers, printers, networking setup eka hari Microvision eken karala. Professional service and after-sales support.',
     rating: 5,
     avatar: 'C',
   },

@@ -726,7 +726,7 @@ How can I help you today? 😊`,
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h3 className="text-white font-semibold text-sm">ECOTEC AI</h3>
+                <h3 className="text-white font-semibold text-sm">Microvision AI</h3>
                 <p className="text-emerald-100 text-[10px]">Ask anything</p>
               </div>
             </div>

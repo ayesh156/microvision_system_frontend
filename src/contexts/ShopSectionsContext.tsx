@@ -238,7 +238,7 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
   // persistence across page refreshes (F5). Falls back to empty array safely.
   const [hiddenSections, setHiddenSections] = useState<string[]>(() => {
     try {
-      return JSON.parse(localStorage.getItem('ecotec_hidden_sections') || '[]');
+      return JSON.parse(localStorage.getItem('microvision_hidden_sections') || '[]');
     } catch {
       return [];
     }
@@ -312,7 +312,7 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
         setHiddenSections(hidden);
         setAdminHiddenSections(adminHidden);
         // Persist fetched values to localStorage (global + shop-scoped keys)
-        localStorage.setItem('ecotec_hidden_sections', JSON.stringify(hidden));
+        localStorage.setItem('microvision_hidden_sections', JSON.stringify(hidden));
         localStorage.setItem(`shop_hidden_sections_${effectiveShopId}`, JSON.stringify(hidden));
         localStorage.setItem(`shop_admin_hidden_sections_${effectiveShopId}`, JSON.stringify(adminHidden));
         setLastFetchedShopId(effectiveShopId);
@@ -320,14 +320,14 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
         const errorData = await response.json().catch(() => ({}));
         console.warn('⚠️ [ShopSections] Failed to fetch - Status:', response.status, 'Error:', errorData);
         // Fallback safely to localStorage instead of wiping to empty arrays.
-        setHiddenSections(JSON.parse(localStorage.getItem('ecotec_hidden_sections') || '[]'));
+        setHiddenSections(JSON.parse(localStorage.getItem('microvision_hidden_sections') || '[]'));
         setAdminHiddenSections(JSON.parse(localStorage.getItem(`shop_admin_hidden_sections_${effectiveShopId}`) || '[]'));
       }
     } catch (error) {
       console.warn('⚠️ Error fetching hidden sections:', error);
       // Fallback safely to localStorage without throwing an uncaught error.
       try {
-        setHiddenSections(JSON.parse(localStorage.getItem('ecotec_hidden_sections') || '[]'));
+        setHiddenSections(JSON.parse(localStorage.getItem('microvision_hidden_sections') || '[]'));
         setAdminHiddenSections(JSON.parse(localStorage.getItem(`shop_admin_hidden_sections_${effectiveShopId}`) || '[]'));
       } catch {
         setHiddenSections([]);
@@ -437,7 +437,7 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     // 1. Instantly update global state + persist to localStorage (reactive sidebar sync)
     setHiddenSections(sections);
-    localStorage.setItem('ecotec_hidden_sections', JSON.stringify(sections));
+    localStorage.setItem('microvision_hidden_sections', JSON.stringify(sections));
     localStorage.setItem(`shop_hidden_sections_${effectiveShopId}`, JSON.stringify(sections));
 
     // 2. Dispatch backend persistence (fire and await for error reporting)
@@ -463,7 +463,7 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
     const syncedHidden = responseData?.data?.hiddenSections ?? responseData?.hiddenSections;
     if (Array.isArray(syncedHidden)) {
       setHiddenSections(syncedHidden);
-      localStorage.setItem('ecotec_hidden_sections', JSON.stringify(syncedHidden));
+      localStorage.setItem('microvision_hidden_sections', JSON.stringify(syncedHidden));
       localStorage.setItem(`shop_hidden_sections_${effectiveShopId}`, JSON.stringify(syncedHidden));
     }
   }, [effectiveShopId, getAccessToken, user?.role]);

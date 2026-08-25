@@ -1,4 +1,4 @@
-// Mock data for ECOTEC Computer Shop
+// Mock data for Microvision Computers
 
 // WhatsApp Message Settings
 export interface WhatsAppSettings {
@@ -1818,7 +1818,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-001',
     name: 'Nuwan Silva',
-    email: 'nuwan.silva@ecotec.lk',
+    email: 'nuwan.silva@microvision.lk',
     phone: '0771234567',
     address: '45, Galle Road, Colombo 03',
     nic: '199512345678',
@@ -1837,7 +1837,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-002',
     name: 'Pradeep Kumar',
-    email: 'pradeep.kumar@ecotec.lk',
+    email: 'pradeep.kumar@microvision.lk',
     phone: '0772345678',
     address: '123, Kandy Road, Peradeniya',
     nic: '199823456789',
@@ -1856,7 +1856,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-003',
     name: 'Chaminda Perera',
-    email: 'chaminda.perera@ecotec.lk',
+    email: 'chaminda.perera@microvision.lk',
     phone: '0773456789',
     address: '78, High Level Road, Nugegoda',
     nic: '199134567890',
@@ -1875,7 +1875,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-004',
     name: 'Tharaka Jayasuriya',
-    email: 'tharaka.j@ecotec.lk',
+    email: 'tharaka.j@microvision.lk',
     phone: '0774567890',
     address: '56, Main Street, Negombo',
     nic: '199645678901',
@@ -1894,7 +1894,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-005',
     name: 'Dinesh Fernando',
-    email: 'dinesh.f@ecotec.lk',
+    email: 'dinesh.f@microvision.lk',
     phone: '0775678901',
     address: '234, Galle Road, Matara',
     nic: '199956789012',
@@ -1913,7 +1913,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-006',
     name: 'Lahiru Bandara',
-    email: 'lahiru.b@ecotec.lk',
+    email: 'lahiru.b@microvision.lk',
     phone: '0776789012',
     address: '89, Lake Road, Kandy',
     nic: '199767890123',
@@ -1932,7 +1932,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-007',
     name: 'Kasun Wickrama',
-    email: 'kasun.w@ecotec.lk',
+    email: 'kasun.w@microvision.lk',
     phone: '0777890123',
     address: '15, Beach Road, Galle',
     nic: '199278901234',
@@ -1951,7 +1951,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-008',
     name: 'Asanka Rajapaksa',
-    email: 'asanka.r@ecotec.lk',
+    email: 'asanka.r@microvision.lk',
     phone: '0778901234',
     address: '67, Main Street, Kurunegala',
     nic: '199489012345',
@@ -1970,7 +1970,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-009',
     name: 'Roshan Mendis',
-    email: 'roshan.m@ecotec.lk',
+    email: 'roshan.m@microvision.lk',
     phone: '0779012345',
     address: '234, Temple Road, Anuradhapura',
     nic: '199690123456',
@@ -1989,7 +1989,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-010',
     name: 'Sampath Liyanage',
-    email: 'sampath.l@ecotec.lk',
+    email: 'sampath.l@microvision.lk',
     phone: '0770123456',
     address: '45, Station Road, Ratnapura',
     nic: '199301234567',
@@ -2008,7 +2008,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-011',
     name: 'Harsha Gunasekara',
-    email: 'harsha.g@ecotec.lk',
+    email: 'harsha.g@microvision.lk',
     phone: '0771234890',
     address: '12, Market Street, Badulla',
     nic: '199812345890',
@@ -2027,7 +2027,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-012',
     name: 'Nimal Jayawardena',
-    email: 'nimal.j@ecotec.lk',
+    email: 'nimal.j@microvision.lk',
     phone: '0772345890',
     address: '78, Hospital Road, Polonnaruwa',
     nic: '198823456789',
@@ -2046,7 +2046,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-013',
     name: 'Ruwan De Silva',
-    email: 'ruwan.ds@ecotec.lk',
+    email: 'ruwan.ds@microvision.lk',
     phone: '0773456890',
     address: '90, New Town, Jaffna',
     nic: '199734567890',
@@ -2065,7 +2065,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-014',
     name: 'Saman Kumara',
-    email: 'saman.k@ecotec.lk',
+    email: 'saman.k@microvision.lk',
     phone: '0774567890',
     address: '156, Hill Street, Nuwara Eliya',
     nic: '199045678901',
@@ -2084,7 +2084,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-015',
     name: 'Ajith Kumara',
-    email: 'ajith.k@ecotec.lk',
+    email: 'ajith.k@microvision.lk',
     phone: '0775678012',
     address: '23, Garden Lane, Moratuwa',
     nic: '199556780123',
@@ -2103,7 +2103,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-016',
     name: 'Thilina Peris',
-    email: 'thilina.p@ecotec.lk',
+    email: 'thilina.p@microvision.lk',
     phone: '0776780123',
     address: '34, Beach Road, Trincomalee',
     nic: '199867801234',
@@ -2122,7 +2122,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-017',
     name: 'Prasanna Weerasinghe',
-    email: 'prasanna.w@ecotec.lk',
+    email: 'prasanna.w@microvision.lk',
     phone: '0777801234',
     address: '67, Railway Avenue, Panadura',
     nic: '199178012345',
@@ -2141,7 +2141,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-018',
     name: 'Buddhika Fernando',
-    email: 'buddhika.f@ecotec.lk',
+    email: 'buddhika.f@microvision.lk',
     phone: '0778012345',
     address: '89, Temple Junction, Dambulla',
     nic: '199389012345',
@@ -2160,7 +2160,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-019',
     name: 'Dilshan Rathnayake',
-    email: 'dilshan.r@ecotec.lk',
+    email: 'dilshan.r@microvision.lk',
     phone: '0779123456',
     address: '12, Clock Tower Road, Matale',
     nic: '200001234567',
@@ -2179,7 +2179,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-020',
     name: 'Gayan Senanayake',
-    email: 'gayan.s@ecotec.lk',
+    email: 'gayan.s@microvision.lk',
     phone: '0770234567',
     address: '45, Bus Stand Road, Hambantota',
     nic: '199502345678',
@@ -2198,7 +2198,7 @@ export const mockTechnicians: Technician[] = [
   {
     id: 'tech-021',
     name: 'Mahesh Jayakody',
-    email: 'mahesh.j@ecotec.lk',
+    email: 'mahesh.j@microvision.lk',
     phone: '0771345678',
     address: '78, New Road, Chilaw',
     nic: '199713456789',

@@ -502,7 +502,7 @@ export const ShopSettings: React.FC = () => {
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     disabled={!canEdit}
-                    placeholder="e.g., ECOTEC COMPUTER"
+                    placeholder="e.g., Microvision Computers"
                     className={`w-full px-4 py-2.5 rounded-xl border transition-all ${
                       theme === 'dark'
                         ? 'bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
@@ -631,7 +631,7 @@ export const ShopSettings: React.FC = () => {
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     disabled={!canEdit}
-                    placeholder="e.g., info@ecotec.lk"
+                    placeholder="e.g., info@microvision.lk"
                     className={`w-full px-4 py-2.5 rounded-xl border transition-all ${
                       theme === 'dark'
                         ? 'bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'
@@ -655,7 +655,7 @@ export const ShopSettings: React.FC = () => {
                     value={formData.website}
                     onChange={(e) => handleChange('website', e.target.value)}
                     disabled={!canEdit}
-                    placeholder="e.g., www.ecotec.lk"
+                    placeholder="e.g., www.microvision.lk"
                     className={`w-full px-4 py-2.5 rounded-xl border transition-all ${
                       theme === 'dark'
                         ? 'bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-500 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/20'

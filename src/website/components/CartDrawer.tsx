@@ -32,7 +32,7 @@ export default function CartDrawer() {
   } = useCart();
 
   const handleWhatsAppOrder = () => {
-    let message = '🛒 *New Order from Ecotec Website*\n\n';
+    let message = '🛒 *New Order from Microvision Website*\n\n';
     items.forEach((item, i) => {
       message += `${i + 1}. ${item.name} x${item.quantity} - ${formatPrice(item.price * item.quantity)}\n`;
     });

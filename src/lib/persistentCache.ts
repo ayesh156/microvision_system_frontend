@@ -4,7 +4,7 @@
  * Works alongside the in-memory DataCacheContext
  */
 
-const CACHE_PREFIX = 'ecotec_cache_';
+const CACHE_PREFIX = 'microvision_cache_';
 
 interface CacheEntry<T> {
   data: T;
@@ -140,7 +140,7 @@ export function invalidateShopCaches(shopId: string): void {
 }
 
 /**
- * Clear all ECOTEC caches
+ * Clear all Microvision caches
  */
 export function clearAllCaches(): void {
   const keysToRemove: string[] = [];
@@ -179,7 +179,7 @@ function clearOldCaches(): void {
  */
 export function saveSessionData(key: string, data: unknown): void {
   try {
-    sessionStorage.setItem(`ecotec_session_${key}`, JSON.stringify({
+    sessionStorage.setItem(`microvision_session_${key}`, JSON.stringify({
       data,
       timestamp: Date.now(),
     }));
@@ -193,7 +193,7 @@ export function saveSessionData(key: string, data: unknown): void {
  */
 export function getSessionData<T>(key: string): T | null {
   try {
-    const raw = sessionStorage.getItem(`ecotec_session_${key}`);
+    const raw = sessionStorage.getItem(`microvision_session_${key}`);
     if (!raw) return null;
     const entry = JSON.parse(raw);
     // Session data valid for 24 hours

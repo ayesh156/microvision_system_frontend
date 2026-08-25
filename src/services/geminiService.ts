@@ -1,4 +1,4 @@
-// Gemini AI Service for ECOTEC System
+// Gemini AI Service for Microvision System
 // Supports English, Sinhala, and Singlish
 
 interface GeminiResponse {
@@ -22,7 +22,7 @@ interface ChatMessage {
 }
 
 // System prompt that defines AI behavior
-const SYSTEM_PROMPT = `You are Eco System AI Assistant - a helpful, friendly, and knowledgeable assistant for the ECOTEC Computer & Mobile Shop Management System.
+const SYSTEM_PROMPT = `You are Microvision AI Assistant - a helpful, friendly, and knowledgeable assistant for the Microvision Computers Shop Management System.
 
 IMPORTANT LANGUAGE RULES:
 1. You MUST respond in the SAME language the user uses:
@@ -48,7 +48,7 @@ Only translate: Conversational text, greetings, explanations, and general instru
 Example (Sinhala response): "🔍 **INVOICE #10260011** මේක GameZone Café ගේ invoice එක. Total: Rs. 1,345,500"
 NOT: "🔍 **ඉන්වොයිසය #10260011** පාරිභෝගිකයා: ගේම්සෝන් කැෆේ"
 
-ABOUT ECOTEC SYSTEM - You have knowledge about:
+ABOUT MICROVISION SYSTEM - You have knowledge about:
 
 📦 INVENTORY MANAGEMENT:
 - Products: Add, edit, delete products with details (name, brand, category, price, stock, barcode, IMEI)
@@ -141,7 +141,7 @@ PERSONALITY:
 - If you don't know something, say so honestly
 - Suggest relevant features that might help the user
 
-Remember: You represent ECOTEC - a premium computer and mobile shop in Sri Lanka. Be proud of the system and help users make the most of it!`;
+Remember: You represent Microvision Computers - a premium computer and mobile shop in Sri Lanka. Be proud of the system and help users make the most of it!`;
 
 // Ordered list of models to try — first one that works gets cached
 const GEMINI_MODELS = [
@@ -163,7 +163,7 @@ class GeminiService {
     // Initialize API key from environment variable or localStorage
     this.initApiKey();
     // Restore cached working model
-    this.workingModel = localStorage.getItem('ecotec_gemini_model');
+    this.workingModel = localStorage.getItem('microvision_gemini_model');
   }
 
   private initApiKey() {
@@ -175,7 +175,7 @@ class GeminiService {
     }
     
     // Priority 2: localStorage
-    const storedKey = localStorage.getItem('ecotec_gemini_api_key');
+    const storedKey = localStorage.getItem('microvision_gemini_api_key');
     if (storedKey && storedKey.trim().length > 0) {
       this.apiKey = storedKey.trim();
     }
@@ -184,7 +184,7 @@ class GeminiService {
   setApiKey(key: string) {
     this.apiKey = key.trim();
     // Store in localStorage for persistence
-    localStorage.setItem('ecotec_gemini_api_key', key.trim());
+    localStorage.setItem('microvision_gemini_api_key', key.trim());
   }
 
   getApiKey(): string | null {
@@ -209,7 +209,7 @@ class GeminiService {
     if (!this.hasEnvApiKey()) {
       this.apiKey = null;
     }
-    localStorage.removeItem('ecotec_gemini_api_key');
+    localStorage.removeItem('microvision_gemini_api_key');
     // Re-init to pick up env key if available
     this.initApiKey();
   }
@@ -261,7 +261,7 @@ class GeminiService {
         // Clear cached model if it was the one that failed
         if (this.workingModel === model) {
           this.workingModel = null;
-          localStorage.removeItem('ecotec_gemini_model');
+          localStorage.removeItem('microvision_gemini_model');
         }
         lastResponse = response;
         continue;
@@ -270,7 +270,7 @@ class GeminiService {
       // Any other status (200, 400, 403, 429...) = model exists, return the response
       if (this.workingModel !== model) {
         this.workingModel = model;
-        localStorage.setItem('ecotec_gemini_model', model);
+        localStorage.setItem('microvision_gemini_model', model);
         console.log(`✅ Cached working model: ${model}`);
       }
       return response;
@@ -677,7 +677,7 @@ ${doNotTranslateRule}`;
     // Build data summary for context
     const dataSummary = this.buildDataSummary(systemData);
 
-    const analysisPrompt = `ROLE: You are the INTELLIGENT DATA ENGINE for ECOTEC Computer Shop.
+    const analysisPrompt = `ROLE: You are the INTELLIGENT DATA ENGINE for Microvision Computers.
 You are NOT a support agent. You are a DATA TERMINAL that DIRECTLY SHOWS DATA.
 Your ONLY job is to query the "CURRENT SYSTEM DATA" block below and answer the user's question using that specific data.
 

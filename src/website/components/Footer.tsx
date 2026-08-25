@@ -38,7 +38,7 @@ export default function Footer() {
               <Box
                 component="img"
                 src="/logo.png"
-                alt="Ecotec Logo"
+                alt="Microvision Logo"
                 sx={{
                   width: 48,
                   height: 48,

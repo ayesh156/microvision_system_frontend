@@ -222,7 +222,7 @@ export const Estimates: React.FC = () => {
       `📦 Items: ${estimate.items.length}\n` +
       `💰 *Total: ${formatCurrency(estimate.total)}*\n\n` +
       `For full details, please visit our shop or contact us.\n\n` +
-      `Thank you!\n*Eco System Computer Shop*\n📞 011-2345678`;
+      `Thank you!\n*Microvision Computers*\n📞 0412268407 / 0774636561`;
     const phone = '94783233760';
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };

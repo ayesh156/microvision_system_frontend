@@ -198,7 +198,7 @@ export const ShopSetup: React.FC = () => {
                   value={formData.shopName}
                   onChange={handleChange}
                   required
-                  placeholder="e.g., ECOTEC Computer Shop"
+                  placeholder="e.g., Microvision Computers"
                   className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all ${
                     theme === 'dark'
                       ? 'bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-500 focus:border-emerald-500/50'
@@ -248,7 +248,7 @@ export const ShopSetup: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="077-1234567"
+                    placeholder="0412268407"
                     className={`w-full pl-10 pr-4 py-3 rounded-xl border transition-all ${
                       theme === 'dark'
                         ? 'bg-slate-800/50 border-slate-700/50 text-white placeholder-slate-500 focus:border-emerald-500/50'

@@ -123,9 +123,9 @@ export const Login: React.FC = () => {
         <div className="relative z-10 flex flex-col justify-between w-full p-12 xl:p-16">
           {/* Top: Logo */}
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="ECOTEC Computer Solutions" className="w-12 h-12 rounded-xl shadow-lg" />
+            <img src="/logo.png" alt="Microvision Computers" className="w-12 h-12 rounded-xl shadow-lg" />
             <div>
-              <h2 className="text-2xl font-bold text-white">ECOTEC Computer Solutions</h2>
+              <h2 className="text-2xl font-bold text-white">Microvision Computers</h2>
               <p className="text-blue-100 text-sm">Internal Management Portal</p>
             </div>
           </div>
@@ -136,7 +136,7 @@ export const Login: React.FC = () => {
               <h1 className="text-4xl xl:text-5xl font-extrabold text-white leading-tight">
                 Welcome to <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-200">
-                  Ecotec Portal
+                  Microvision Portal
                 </span>
               </h1>
               <p className="mt-4 text-lg text-blue-100 max-w-md leading-relaxed">
@@ -174,9 +174,9 @@ export const Login: React.FC = () => {
         <div className="relative w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center justify-center gap-3 mb-8 lg:hidden">
-            <img src='logo.png' alt="ECOTEC Computer Solutions" className="w-12 h-12 rounded-xl shadow-lg" />
+            <img src='logo.png' alt="Microvision Computers" className="w-12 h-12 rounded-xl shadow-lg" />
             <div>
-              <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>ECOTEC Computer Solutions</h2>
+              <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Microvision Computers</h2>
               <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Internal Management Portal</p>
             </div>
           </div>
@@ -320,7 +320,7 @@ export const Login: React.FC = () => {
 
           {/* Footer */}
           <p className={`mt-6 text-center text-xs ${theme === 'dark' ? 'text-slate-600' : 'text-slate-400'}`}>
-            © 2026 ECOTEC Computer Solutions. Powered by NebulaInfinite.
+            © 2026 Microvision Computers. Powered by NebulaInfinite.
           </p>
         </div>
       </div>

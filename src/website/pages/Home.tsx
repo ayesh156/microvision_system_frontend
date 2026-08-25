@@ -96,7 +96,7 @@ const testimonials = [
     role: 'Small Business Owner',
     avatar: 'SP',
     rating: 5,
-    text: 'Ecotec built me a custom workstation that handles all my design needs. Exceptional build quality and outstanding after-sales support!',
+    text: 'Microvision built me a custom workstation that handles all my design needs. Exceptional build quality and outstanding after-sales support!',
   },
   {
     id: 2,
@@ -104,7 +104,7 @@ const testimonials = [
     role: 'Gaming Enthusiast',
     avatar: 'NF',
     rating: 5,
-    text: 'Got my gaming rig from Ecotec. They understood exactly what I needed and built a beast of a machine within my budget. Highly recommend!',
+    text: 'Got my gaming rig from Microvision. They understood exactly what I needed and built a beast of a machine within my budget. Highly recommend!',
   },
   {
     id: 3,
@@ -112,7 +112,7 @@ const testimonials = [
     role: 'School IT Administrator',
     avatar: 'PS',
     rating: 5,
-    text: 'We ve been sourcing all our computer hardware from Ecotec for our school. Reliable products, competitive prices, and they always deliver on time.',
+    text: 'We ve been sourcing all our computer hardware from Microvision for our school. Reliable products, competitive prices, and they always deliver on time.',
   },
 ];
 

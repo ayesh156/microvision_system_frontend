@@ -234,7 +234,7 @@ export const Quotations: React.FC = () => {
       `📦 Items: ${q.items.length}\n` +
       `💰 *Total: ${formatCurrency(q.total)}*\n\n` +
       `For full details, please visit our shop or contact us.\n\n` +
-      `Thank you!\n*ECOTEC Computer Shop*\n📞 011-2345678`;
+      `Thank you!\n*Microvision Computers*\n📞 0412268407 / 0774636561`;
     const phone = '94783233760';
     window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
   };

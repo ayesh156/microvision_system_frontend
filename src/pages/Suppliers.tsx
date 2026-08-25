@@ -688,7 +688,7 @@ Please arrange immediate payment to avoid any service interruptions.
 Thank you for your prompt attention to this matter.
 
 Best regards,
-ECOTEC Computer Solutions`;
+Microvision Computers`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;
@@ -724,7 +724,7 @@ ${daysUntilDue ? `⏰ Days Remaining: ${daysUntilDue} days` : ''}
 Please let us know if you have any questions.
 
 Thank you!
-ECOTEC Computer Solutions`;
+Microvision Computers`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `whatsapp://send?phone=${phone}&text=${encodedMessage}`;

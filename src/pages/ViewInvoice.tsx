@@ -1253,13 +1253,13 @@ Thank you for your business! 🙏`;
                 <div>
                   <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 mb-0.5 sm:mb-2">
                     <Monitor className="w-3.5 h-3.5 sm:w-5 sm:h-5 md:w-8 md:h-8" />
-                    <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">ECOTEC</h2>
+                    <h2 className="text-base sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">Microvision</h2>
                   </div>
-                  <p className="text-emerald-200 text-[9px] sm:text-xs md:text-sm mt-0.5 sm:mt-1 tracking-widest">COMPUTER SOLUTIONS</p>
+                  <p className="text-emerald-200 text-[9px] sm:text-xs md:text-sm mt-0.5 sm:mt-1 tracking-widest">COMPUTERS</p>
                   <div className="mt-1 sm:mt-3 md:mt-4 text-emerald-100 text-[9px] sm:text-xs md:text-sm space-y-0.5">
-                    <p className="flex items-center gap-1 sm:gap-1.5 md:gap-2"><MapPin className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0" /> Main Street, Colombo 03</p>
-                    <p className="flex items-center gap-1 sm:gap-1.5 md:gap-2"><Phone className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0" /> 011-2345678 • 077-1234567</p>
-                    <p className="flex items-center gap-1 sm:gap-1.5 md:gap-2 hidden sm:flex"><Mail className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0" /> info@ecotec.lk</p>
+                    <p className="flex items-center gap-1 sm:gap-1.5 md:gap-2"><MapPin className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0" /> Akuressa road, Makadura</p>
+                    <p className="flex items-center gap-1 sm:gap-1.5 md:gap-2"><Phone className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0" /> 0412268407 • 0774636561</p>
+                    <p className="flex items-center gap-1 sm:gap-1.5 md:gap-2 hidden sm:flex"><Mail className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 flex-shrink-0" /> info@microvision.lk</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end text-right">
@@ -1635,10 +1635,10 @@ Thank you for your business! 🙏`;
                 Thank you for your business!
               </p>
               <p className={`text-center text-[8px] sm:text-[10px] md:text-xs mt-0.5 sm:mt-1 ${theme === 'dark' ? 'text-slate-500' : 'text-slate-500'}`}>
-                ECOTEC Computer Solutions • Main Street, Colombo 03 • 📞 011-2345678 / 077-1234567 • info@ecotec.lk
+                Microvision Computers • Akuressa road, Makadura • 📞 0412268407 / 0774636561 • info@microvision.lk
               </p>
               <p className={`text-center text-[7px] sm:text-[9px] md:text-[10px] mt-0.5 sm:mt-1 md:mt-2 ${theme === 'dark' ? 'text-slate-600' : 'text-slate-400'}`}>
-                © 2025 Powered by <span className="font-semibold">ECOTEC</span>
+                © 2026 Powered by <span className="font-semibold">Microvision Computers</span>
               </p>
             </div>
           </div>

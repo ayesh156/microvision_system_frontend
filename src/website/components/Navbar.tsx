@@ -92,7 +92,7 @@ export default function Navbar() {
               <Box
                 component="img"
                 src="/logo.png"
-                alt="Ecotec Logo"
+                alt="Microvision Logo"
                 sx={{
                   width: 42,
                   height: 42,

@@ -244,7 +244,7 @@ export const generateCombinedCSV = (
   
   // Add header info
   const header = [
-    '# ECOTEC Computer Shop - Combined Data Export',
+    '# Microvision Computers - Combined Data Export',
     `# Generated: ${new Date().toISOString()}`,
     `# Total Tables: ${datasets.length}`,
     `# Total Records: ${datasets.reduce((sum, d) => sum + d.data.length, 0)}`,
