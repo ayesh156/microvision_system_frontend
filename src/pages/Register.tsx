@@ -138,7 +138,7 @@ export const Register: React.FC = () => {
         <div className="relative z-10 flex flex-col justify-between w-full p-12 xl:p-16">
           {/* Top: Logo */}
           <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Eco System" className="w-12 h-12 rounded-xl shadow-lg" />
+            <img src="/logo.jpg" alt="Eco System" className="w-12 h-12 rounded-xl shadow-lg" />
             <div>
               <h2 className="text-2xl font-bold text-white">Eco System</h2>
               <p className="text-blue-100 text-sm">Shop Management System</p>
@@ -200,7 +200,7 @@ export const Register: React.FC = () => {
         <div className="relative w-full max-w-md">
           {/* Mobile logo */}
           <div className="flex items-center justify-center gap-3 mb-8 lg:hidden">
-            <img src="/logo.png" alt="Eco System" className="w-12 h-12 rounded-xl shadow-lg" />
+            <img src="/logo.jpg" alt="Eco System" className="w-12 h-12 rounded-xl shadow-lg" />
             <div>
               <h2 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>Eco System</h2>
               <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Shop Management System</p>

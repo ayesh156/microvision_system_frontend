@@ -796,8 +796,8 @@ export const QuotationForm: React.FC = () => {
     const qNum = quotationNumber;
     const title = downloadAsPdf ? `Quotation PDF - ${qNum}` : `Print Quotation - ${qNum}`;
     win.document.write('<html><head><title>' + title + '</title>');
-    // Add print CSS with explicit color-adjust for PDF/print fidelity
-    win.document.write('<style>@media print { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }</style>');
+    // Add print CSS with explicit color-adjust and A4 portrait safe margins for PDF/print fidelity
+    win.document.write('<style>@media print { @page { size: A4 portrait; margin: 8mm 10mm; } -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }</style>');
     win.document.write('</head><body>');
     win.document.write(printRef.current.innerHTML);
     win.document.write('</body></html>');

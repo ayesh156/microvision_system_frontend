@@ -37,7 +37,7 @@ export default function Footer() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
               <Box
                 component="img"
-                src="/logo.png"
+                src="/logo.jpg"
                 alt="Microvision Logo"
                 sx={{
                   width: 48,

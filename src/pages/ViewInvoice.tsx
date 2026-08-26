@@ -2006,7 +2006,7 @@ Thank you for your business! 🙏`;
             @media print {
               @page {
                 size: A4 portrait;
-                margin: 10mm 12mm;
+                margin: 8mm 10mm;
               }
               body * { visibility: hidden; }
               .print-area, .print-area * { visibility: visible; }

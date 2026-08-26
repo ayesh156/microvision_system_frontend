@@ -91,7 +91,7 @@ export default function Navbar() {
             >
               <Box
                 component="img"
-                src="/logo.png"
+                src="/logo.jpg"
                 alt="Microvision Logo"
                 sx={{
                   width: 42,

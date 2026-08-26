@@ -1399,7 +1399,7 @@ export const CashManagement: React.FC = () => {
     <div class="header">
       <div class="company-section">
         <div class="company-logo">
-          <img src="/logo.png" alt="Eco System Logo" />
+          <img src="/logo.jpg" alt="Eco System Logo" />
         </div>
         <div class="company-info">
           <h1>ECO SYSTEM COMPUTER</h1>

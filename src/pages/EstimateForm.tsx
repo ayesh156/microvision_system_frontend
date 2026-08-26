@@ -699,7 +699,8 @@ export const EstimateForm: React.FC = () => {
     const win = window.open('', '_blank');
     if (!win) return;
     win.document.write('<html><head><title>Estimate - ' + (isEditing ? `${id}` : estimateNumber) + '</title>');
-    win.document.write('<style>@media print { @page { size: A4 portrait; margin: 0; } }</style>');
+    // Print CSS: A4 portrait with safe margins (no clipping) + exact color for headers/watermarks
+    win.document.write('<style>@media print { @page { size: A4 portrait; margin: 8mm 10mm; } -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }</style>');
     win.document.write('</head><body>');
     win.document.write(printRef.current.innerHTML);
     win.document.write('</body></html>');

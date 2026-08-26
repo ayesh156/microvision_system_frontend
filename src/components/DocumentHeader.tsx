@@ -41,7 +41,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   const shopAddress = branding?.address || 'Akuressa road, Makadura';
   const shopPhone = branding?.phone || '0412268407 / 0774636561';
   const shopEmail = branding?.email || 'info@microvision.lk';
-  const shopLogo = branding?.logo || '/logo.png';
+  const shopLogo = branding?.logo || '/logo.jpg';
   const hasCustomLogo = !!branding?.logo;
 
   const renderCompanyLogo = () => {

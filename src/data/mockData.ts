@@ -2437,6 +2437,7 @@ export interface InvoiceItem {
   total: number;
   warrantyDueDate?: string;
   warranty?: string; // Warranty period (e.g., "1 year", "6 months") for display in invoices
+  serialNo?: string; // Serial number for warranty tracking
 }
 
 // Sales History for tracking product sales

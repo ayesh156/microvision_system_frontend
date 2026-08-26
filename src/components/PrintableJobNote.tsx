@@ -22,7 +22,7 @@ export const PrintableJobNote = forwardRef<HTMLDivElement, PrintableJobNoteProps
     // Use branding values with fallbacks
     const shopName = branding?.name || 'Eco System';
     const hasCustomLogo = !!branding?.logo;
-    const shopLogo = branding?.logo || '/logo.png';
+    const shopLogo = branding?.logo || '/logo.jpg';
     const shopPhone = branding?.phone || '0412268407 / 0774636561';
     const shopEmail = branding?.email || 'info@ecosystem.lk';
 

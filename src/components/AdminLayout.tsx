@@ -498,7 +498,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             // SUPER_ADMIN not viewing a shop: Show Ecosystem branding
             <>
               <div className="relative flex-shrink-0">
-                <img src="/logo.png" alt="Eco System" className="w-10 h-10 object-contain" />
+                <img src="/logo.jpg" alt="Eco System" className="w-10 h-10 object-contain" />
               </div>
               {!sidebarCollapsed && (
                 <div className="flex flex-col overflow-hidden">
@@ -1060,7 +1060,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             // SUPER_ADMIN: Show Ecosystem branding
             <>
               <div className="flex-shrink-0">
-                <img src='logo.png' alt="Eco System" className="w-10 h-10 object-contain" />
+                <img src='logo.jpg' alt="Eco System" className="w-10 h-10 object-contain" />
               </div>
               <div className="flex flex-col">
                 <span className={`text-base font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
