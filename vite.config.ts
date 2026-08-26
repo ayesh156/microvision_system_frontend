@@ -100,12 +100,7 @@ export default defineConfig({
           if (id.includes('node_modules/xlsx')) {
             return 'vendor-xlsx';
           }
-          
-          // Supabase
-          if (id.includes('node_modules/@supabase/')) {
-            return 'vendor-supabase';
-          }
-          
+                    
           // Remaining node_modules
           if (id.includes('node_modules/')) {
             return 'vendor-other';
