@@ -454,7 +454,7 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('❌ Failed to update sections:', error);
+      // console.error('❌ Failed to update sections:', error);
       throw new Error(error.message || error.error || 'Failed to update sections');
     }
 
@@ -499,7 +499,7 @@ export const ShopSectionsProvider: React.FC<{ children: ReactNode }> = ({ childr
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('❌ Failed to update admin sections:', error);
+      // console.error('❌ Failed to update admin sections:', error);
       throw new Error(error.message || error.error || 'Failed to update admin sections');
     }
 

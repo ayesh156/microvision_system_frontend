@@ -89,7 +89,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       setProfileDropdownOpen(false);
       navigate('/login', { replace: true });
     } catch (error) {
-      console.error('Logout failed:', error);
+      // console.error('Logout failed:', error);
     }
   };
 

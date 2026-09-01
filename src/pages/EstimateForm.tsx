@@ -134,7 +134,7 @@ export const EstimateForm: React.FC = () => {
     estimateService.getNextNumber()
       .then((num) => { if (!cancelled) setEstimateNumber(num); })
       .catch((err) => {
-        console.error('Failed to fetch next estimate number:', err);
+        // console.error('Failed to fetch next estimate number:', err);
         if (!cancelled) setEstimateNumber('');
       });
     return () => { cancelled = true; };
@@ -357,7 +357,7 @@ export const EstimateForm: React.FC = () => {
             setTimeout(() => setShowPreview(true), 200);
           }
         } catch (error) {
-          console.error('Failed to load estimate:', error);
+          // console.error('Failed to load estimate:', error);
           toast.error('Failed to load estimate');
         } finally {
           setTimeout(() => setIsLoadingEstimate(false), 100);
@@ -652,7 +652,7 @@ export const EstimateForm: React.FC = () => {
       toast.success(`Estimate ${created.estimateNumber} created successfully`);
       return created.id;
     } catch (error) {
-      console.error('Failed to save estimate:', error);
+      // console.error('Failed to save estimate:', error);
       toast.error(getServerErrorMessage(error), { duration: 6000 });
       return null;
     }

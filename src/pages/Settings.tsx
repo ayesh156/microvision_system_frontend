@@ -205,7 +205,7 @@ export const Settings: React.FC = () => {
   // Update form when effective shop changes (e.g., SUPER_ADMIN switches shops)
   React.useEffect(() => {
     if (effectiveShop) {
-      console.log('📋 Settings: Loading shop details for:', effectiveShop.name, effectiveShop.id);
+      // console.log('📋 Settings: Loading shop details for:', effectiveShop.name, effectiveShop.id);
     }
   }, [effectiveShop?.id]);
 
@@ -336,7 +336,7 @@ export const Settings: React.FC = () => {
         await updateAdminHiddenSections(newAdminHiddenSections);
       }
     } catch (error) {
-      console.error('❌ Failed to toggle section:', error);
+      // console.error('❌ Failed to toggle section:', error);
     }
   };
 
@@ -1190,7 +1190,7 @@ export const Settings: React.FC = () => {
       toast.success('Settings saved successfully!');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
-      console.error('Failed to save settings:', error);
+      // console.error('Failed to save settings:', error);
       toast.error('Failed to save settings');
     } finally {
       setIsSaving(false);

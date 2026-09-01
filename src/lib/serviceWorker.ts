@@ -7,14 +7,14 @@ const SW_URL = '/sw.js';
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
-    console.log('[SW] Service Workers not supported');
+    // console.log('[SW] Service Workers not supported');
     return null;
   }
 
   // Don't register in development — the SW caches Vite source files and
   // breaks HMR / WebSocket connections.
   if (import.meta.env.DEV) {
-    console.log('[SW] Skipping registration in development mode');
+    // console.log('[SW] Skipping registration in development mode');
     // Unregister any previously registered SW so stale cached files
     // don't keep being served from the cache.
     const registrations = await navigator.serviceWorker.getRegistrations();
@@ -25,7 +25,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     const cacheNames = await caches.keys();
     await Promise.all(cacheNames.map((name) => caches.delete(name)));
     if (registrations.length || cacheNames.length) {
-      console.log('[SW] Cleaned up previous SW registrations & caches');
+      // console.log('[SW] Cleaned up previous SW registrations & caches');
     }
     return null;
   }
@@ -35,7 +35,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       scope: '/',
     });
 
-    console.log('[SW] Service Worker registered successfully');
+    // console.log('[SW] Service Worker registered successfully');
 
     // Check for updates periodically (every 30 minutes)
     setInterval(() => {
@@ -50,7 +50,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       newWorker.addEventListener('statechange', () => {
         if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
           // New version available - auto-activate on next navigation
-          console.log('[SW] New version available, will activate on next visit');
+          // console.log('[SW] New version available, will activate on next visit');
           newWorker.postMessage('SKIP_WAITING');
         }
       });
@@ -58,7 +58,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     return registration;
   } catch (error) {
-    console.error('[SW] Registration failed:', error);
+    // console.error('[SW] Registration failed:', error);
     return null;
   }
 }
@@ -78,7 +78,7 @@ export async function unregisterServiceWorker(): Promise<void> {
   const cacheNames = await caches.keys();
   await Promise.all(cacheNames.map((name) => caches.delete(name)));
 
-  console.log('[SW] Service Worker unregistered and caches cleared');
+  // console.log('[SW] Service Worker unregistered and caches cleared');
 }
 
 /**

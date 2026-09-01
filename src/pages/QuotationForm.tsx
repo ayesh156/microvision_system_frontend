@@ -251,7 +251,7 @@ export const QuotationForm: React.FC = () => {
           loadCustomers(true).catch(() => {});
         }
       } catch (error) {
-        console.error('Failed to fetch customers:', error);
+        // console.error('Failed to fetch customers:', error);
         setApiCustomers(cacheFilteredCustomers);
       } finally {
         setIsSearchingCustomers(false);
@@ -273,7 +273,7 @@ export const QuotationForm: React.FC = () => {
     if (!isSearchingCustomers) {
       setIsSearchingCustomers(true);
       loadCustomers(true).then(() => {}).catch((error) => {
-        console.error('Failed to fetch recent customers:', error);
+        // console.error('Failed to fetch recent customers:', error);
         setApiCustomers([]);
       }).finally(() => setIsSearchingCustomers(false));
     }
@@ -335,7 +335,7 @@ export const QuotationForm: React.FC = () => {
     if (!isEditing && !isDuplicating) {
       quotationService.getNextNumber()
         .then((num) => setQuotationNumber(num))
-        .catch((error) => console.error('Failed to fetch next quotation number:', error));
+        .catch((error) => // console.error('Failed to fetch next quotation number:', error));
     }
   }, [isEditing, isDuplicating]);
 
@@ -445,7 +445,7 @@ export const QuotationForm: React.FC = () => {
             setTimeout(() => setShowPreview(true), 200);
           }
         } catch (error) {
-          console.error('Failed to load quotation for edit:', error);
+          // console.error('Failed to load quotation for edit:', error);
           toast.error('Failed to load quotation. Please check the quotation ID or refresh.');
         } finally {
           setIsLoadingQuotation(false);
@@ -751,7 +751,7 @@ export const QuotationForm: React.FC = () => {
       toast.success(`Quotation ${created.quotationNumber} created successfully`);
       return created.id;
     } catch (error) {
-      console.error('Failed to save quotation:', error);
+      // console.error('Failed to save quotation:', error);
       toast.error(getServerErrorMessage(error), { duration: 6000 });
       return null;
     } finally {
@@ -816,7 +816,7 @@ export const QuotationForm: React.FC = () => {
       openPrintWindow(false);
       navigate('/system/quotations');
     } catch (err) {
-      console.error('Print failed:', err);
+      // console.error('Print failed:', err);
       toast.error('Failed to open print. Please try again.');
     } finally { setIsPrinting(false); }
   };
@@ -831,7 +831,7 @@ export const QuotationForm: React.FC = () => {
       openPrintWindow(true);
       navigate('/system/quotations');
     } catch (err) {
-      console.error('PDF export failed:', err);
+      // console.error('PDF export failed:', err);
       toast.error('Failed to prepare PDF. Please try again.');
     } finally { setIsPrinting(false); }
   };

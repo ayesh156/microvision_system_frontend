@@ -128,7 +128,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       setApiCategories(categoriesResult.categories);
       setApiBrands(brandsResult.brands);
     } catch (error) {
-      console.error('Failed to load categories/brands:', error);
+      // console.error('Failed to load categories/brands:', error);
     } finally {
       setIsLoadingData(false);
     }
@@ -210,7 +210,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           setShowSuggestions(true);
         }
       } catch (error) {
-        console.error('Failed to get suggestions:', error);
+        // console.error('Failed to get suggestions:', error);
       } finally {
         setIsSearchingSuggestions(false);
       }
@@ -249,7 +249,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       );
       setFormData(prev => ({ ...prev, description }));
     } catch (error) {
-      console.error('Failed to generate description:', error);
+      // console.error('Failed to generate description:', error);
     } finally {
       setIsGeneratingDescription(false);
     }
@@ -364,7 +364,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 setTimeout(() => setAiAutoFillSuccess(false), 3000);
               }
             } catch (dbError) {
-              console.log('DB search failed, using AI result:', dbError);
+              // console.log('DB search failed, using AI result:', dbError);
               const matchedBrand = findBestBrandMatch(analysisResult.brand);
               const matchedCategory = findBestCategoryMatch(analysisResult.category);
 
@@ -385,13 +385,13 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             }
           }
         } catch (analysisError) {
-          console.log('Image analysis failed:', analysisError);
+          // console.log('Image analysis failed:', analysisError);
         } finally {
           setIsAnalyzingImage(false);
         }
       }
     } catch (error) {
-      console.error('Upload failed:', error);
+      // console.error('Upload failed:', error);
       setErrors(prev => ({ 
         ...prev, 
         image: error instanceof Error ? error.message : 'Failed to upload image' 
@@ -467,7 +467,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             await deleteProductImage(filename);
           }
         } catch (error) {
-          console.error('Failed to delete image:', error);
+          // console.error('Failed to delete image:', error);
         }
       }
       // For Supabase URLs or other external URLs, we don't delete them
@@ -565,7 +565,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       onSave(frontendProduct);
       onClose();
     } catch (error) {
-      console.error('Failed to save product:', error);
+      // console.error('Failed to save product:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to save product');
     } finally {
       setIsLoading(false);

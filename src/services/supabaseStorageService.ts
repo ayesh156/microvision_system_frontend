@@ -82,7 +82,7 @@ export async function uploadLogo(file: File, shopId: string): Promise<UploadResu
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
+      // console.error('Supabase upload error:', error);
       return {
         success: false,
         error: error.message || 'Failed to upload logo',
@@ -100,7 +100,7 @@ export async function uploadLogo(file: File, shopId: string): Promise<UploadResu
       path: data.path,
     };
   } catch (err) {
-    console.error('Upload error:', err);
+    // console.error('Upload error:', err);
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Failed to upload logo',
@@ -131,7 +131,7 @@ export async function deleteLogo(url: string): Promise<{ success: boolean; error
       .remove([filePath]);
 
     if (error) {
-      console.error('Supabase delete error:', error);
+      // console.error('Supabase delete error:', error);
       // Don't fail the operation, just log the error
       // The new logo will still be uploaded
       return {
@@ -142,7 +142,7 @@ export async function deleteLogo(url: string): Promise<{ success: boolean; error
 
     return { success: true };
   } catch (err) {
-    console.error('Delete error:', err);
+    // console.error('Delete error:', err);
     // Don't fail the operation
     return {
       success: true,

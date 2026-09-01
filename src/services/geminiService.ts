@@ -230,7 +230,7 @@ class GeminiService {
 
     for (const model of modelsToTry) {
       const url = `${API_BASE}/${model}:generateContent?key=${apiKey}`;
-      console.log(`🤖 Trying Gemini model: ${model}`);
+      // console.log(`🤖 Trying Gemini model: ${model}`);
 
       // Retry loop for 429 rate-limit errors (up to 3 retries)
       const MAX_RETRIES = 3;
@@ -271,13 +271,13 @@ class GeminiService {
       if (this.workingModel !== model) {
         this.workingModel = model;
         localStorage.setItem('microvision_gemini_model', model);
-        console.log(`✅ Cached working model: ${model}`);
+        // console.log(`✅ Cached working model: ${model}`);
       }
       return response;
     }
 
     // All models returned 404 — return the last response so caller handles the error
-    console.error('❌ All Gemini models returned 404');
+    // console.error('❌ All Gemini models returned 404');
     return lastResponse!;
   }
 
@@ -373,7 +373,7 @@ ${finalInstructions}`;
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.error?.message || `API Error: ${response.status}`;
-        console.error('Gemini API Error:', response.status, errorData);
+        // console.error('Gemini API Error:', response.status, errorData);
         
         // Check for specific error types
         if (response.status === 400) {
@@ -484,7 +484,7 @@ Focus on accuracy with real product names and realistic Sri Lankan market prices
       }
       return [];
     } catch (error) {
-      console.error('Product suggestion error:', error);
+      // console.error('Product suggestion error:', error);
       return [];
     }
   }
@@ -566,7 +566,7 @@ Be accurate and extract as much detail as possible from the image. If you cannot
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Vision API error:', response.status, errorData);
+        // console.error('Vision API error:', response.status, errorData);
         throw new Error('Failed to analyze image');
       }
 
@@ -580,7 +580,7 @@ Be accurate and extract as much detail as possible from the image. If you cannot
       }
       return null;
     } catch (error) {
-      console.error('Image analysis error:', error);
+      // console.error('Image analysis error:', error);
       throw error;
     }
   }
@@ -847,7 +847,7 @@ For EXPENSE LIST:
       const data = await response.json();
       return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || 'Unable to analyze data.';
     } catch (error) {
-      console.error('Data analysis error:', error);
+      // console.error('Data analysis error:', error);
       throw error;
     }
   }

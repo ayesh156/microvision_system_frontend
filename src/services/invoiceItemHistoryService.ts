@@ -72,23 +72,23 @@ export const invoiceItemHistoryService = {
       url += `?shopId=${shopId}`;
     }
     
-    console.log('📡 [HistoryService] GET request to:', url);
+    // console.log('📡 [HistoryService] GET request to:', url);
     
     const response = await fetchWithAuth(url, {
       method: 'GET',
       headers: getAuthHeaders(),
     });
     
-    console.log('📡 [HistoryService] GET response status:', response.status, response.statusText);
+    // console.log('📡 [HistoryService] GET response status:', response.status, response.statusText);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('📡 [HistoryService] GET failed:', errorData);
+      // console.error('📡 [HistoryService] GET failed:', errorData);
       throw new Error(errorData.error || `Failed to fetch item history: ${response.statusText}`);
     }
     
     const data: HistoryResponse = await response.json();
-    console.log('📡 [HistoryService] GET success:', data);
+    // console.log('📡 [HistoryService] GET success:', data);
     
     if (!data.success) {
       throw new Error(data.error || 'Failed to fetch item history');
@@ -111,8 +111,8 @@ export const invoiceItemHistoryService = {
       url += `?shopId=${shopId}`;
     }
     
-    console.log('📡 [HistoryService] POST request to:', url);
-    console.log('📡 [HistoryService] POST body:', JSON.stringify(changes, null, 2));
+    // console.log('📡 [HistoryService] POST request to:', url);
+    // console.log('📡 [HistoryService] POST body:', JSON.stringify(changes, null, 2));
     
     const response = await fetchWithAuth(url, {
       method: 'POST',
@@ -120,16 +120,16 @@ export const invoiceItemHistoryService = {
       body: JSON.stringify(changes),
     });
     
-    console.log('📡 [HistoryService] POST response status:', response.status, response.statusText);
+    // console.log('📡 [HistoryService] POST response status:', response.status, response.statusText);
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('📡 [HistoryService] POST failed:', errorData);
+      // console.error('📡 [HistoryService] POST failed:', errorData);
       throw new Error(errorData.error || `Failed to create item history: ${response.statusText}`);
     }
     
     const data: HistoryResponse = await response.json();
-    console.log('📡 [HistoryService] POST success:', data);
+    // console.log('📡 [HistoryService] POST success:', data);
     
     if (!data.success) {
       throw new Error(data.error || 'Failed to create item history');

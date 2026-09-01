@@ -240,13 +240,13 @@ export const productService = {
     if (params.shopId) queryParams.append('shopId', params.shopId);
 
     const url = `${API_BASE_URL}/products?${queryParams.toString()}`;
-    console.log('📝 Fetching products from:', url);
+    // console.log('📝 Fetching products from:', url);
     const response = await fetchWithAuth(url, {
       headers: getAuthHeaders(),
     });
     const result = await handleResponse<APIResponse<APIProduct[]>>(response);
     
-    console.log('✅ Loaded products from API:', result.data.length);
+    // console.log('✅ Loaded products from API:', result.data.length);
     return {
       products: result.data,
       pagination: result.pagination || { page: 1, limit: 10, total: result.data.length, totalPages: 1 }
@@ -319,7 +319,7 @@ export const productService = {
    * Create a new product
    */
   async create(data: CreateProductDTO, shopId?: string): Promise<APIProduct> {
-    console.log('📝 Creating product:', data.name);
+    // console.log('📝 Creating product:', data.name);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/products${queryParams}`, {
       method: 'POST',
@@ -327,7 +327,7 @@ export const productService = {
       body: JSON.stringify(data),
     });
     const result = await handleResponse<APIResponse<APIProduct>>(response);
-    console.log('✅ Product created:', result.data.id);
+    // console.log('✅ Product created:', result.data.id);
     return result.data;
   },
 
@@ -335,7 +335,7 @@ export const productService = {
    * Update an existing product
    */
   async update(id: string, data: UpdateProductDTO, shopId?: string): Promise<APIProduct> {
-    console.log('📝 Updating product:', id);
+    // console.log('📝 Updating product:', id);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/products/${id}${queryParams}`, {
       method: 'PUT',
@@ -343,7 +343,7 @@ export const productService = {
       body: JSON.stringify(data),
     });
     const result = await handleResponse<APIResponse<APIProduct>>(response);
-    console.log('✅ Product updated:', result.data.id);
+    // console.log('✅ Product updated:', result.data.id);
     return result.data;
   },
 
@@ -356,7 +356,7 @@ export const productService = {
     referenceId?: string;
     referenceNumber?: string;
   }): Promise<APIProduct> {
-    console.log('📝 Adjusting product stock:', id, operation, quantity);
+    // console.log('📝 Adjusting product stock:', id, operation, quantity);
     const response = await fetchWithAuth(`${API_BASE_URL}/products/${id}/stock`, {
       method: 'PATCH',
       headers: getAuthHeaders(),
@@ -367,7 +367,7 @@ export const productService = {
       }),
     });
     const result = await handleResponse<APIResponse<APIProduct>>(response);
-    console.log('✅ Product stock adjusted:', result.data.stock);
+    // console.log('✅ Product stock adjusted:', result.data.stock);
     return result.data;
   },
 
@@ -422,14 +422,14 @@ export const productService = {
    * Delete a product (Admin only)
    */
   async delete(id: string, shopId?: string): Promise<void> {
-    console.log('🗑️ Deleting product:', id);
+    // console.log('🗑️ Deleting product:', id);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/products/${id}${queryParams}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
     await handleResponse<APIResponse<null>>(response);
-    console.log('✅ Product deleted');
+    // console.log('✅ Product deleted');
   },
 };
 

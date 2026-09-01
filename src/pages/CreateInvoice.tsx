@@ -94,11 +94,11 @@ export const CreateInvoice: React.FC = () => {
         
         if (loadedCustomers.length > 0) {
           setCustomers(loadedCustomers);
-          console.log('✅ Loaded customers:', loadedCustomers.length);
+          // console.log('✅ Loaded customers:', loadedCustomers.length);
         }
         if (loadedProducts.length > 0) {
           setProducts(loadedProducts);
-          console.log('✅ Loaded products:', loadedProducts.length);
+          // console.log('✅ Loaded products:', loadedProducts.length);
         }
         setIsUsingAPI(true);
       } catch (error) {
@@ -567,13 +567,13 @@ export const CreateInvoice: React.FC = () => {
         notes: undefined,
       };
       
-      console.log('📤 Sending invoice data to API:', JSON.stringify(invoiceData, null, 2));
+      // console.log('📤 Sending invoice data to API:', JSON.stringify(invoiceData, null, 2));
       
       // Try API for all invoices (including walk-in with null customerId)
       // Pass shopId for SuperAdmin viewing other shops
       const apiInvoice = await invoiceService.create(invoiceData, currentShopId || undefined);
 
-      console.log('✅ Invoice created via API:', apiInvoice.invoiceNumber);
+      // console.log('✅ Invoice created via API:', apiInvoice.invoiceNumber);
       
       toast.success('Invoice created successfully', {
         description: `Invoice #${apiInvoice.invoiceNumber} has been created.`,
@@ -591,7 +591,7 @@ export const CreateInvoice: React.FC = () => {
           const soldItem = items.find(item => item.productId === product.id);
           if (soldItem) {
             const newStock = Math.max(0, product.stock - soldItem.quantity);
-            console.log(`📦 Updated ${product.name} stock: ${product.stock} → ${newStock} (sold: -${soldItem.quantity})`);
+            // console.log(`📦 Updated ${product.name} stock: ${product.stock} → ${newStock} (sold: -${soldItem.quantity})`);
             return { ...product, stock: newStock };
           }
           return product;

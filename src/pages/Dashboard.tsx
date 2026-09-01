@@ -39,7 +39,7 @@ export const Dashboard: React.FC = () => {
           loadCustomers()
         ]);
       } catch (error) {
-        console.error('Failed to load dashboard data:', error);
+        // console.error('Failed to load dashboard data:', error);
       }
     };
     
@@ -59,7 +59,7 @@ export const Dashboard: React.FC = () => {
         loadCustomers(true)
       ]);
     } catch (error) {
-      console.error('Failed to refresh dashboard data:', error);
+      // console.error('Failed to refresh dashboard data:', error);
     } finally {
       setIsRefreshing(false);
     }

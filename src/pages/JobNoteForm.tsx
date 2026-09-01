@@ -320,7 +320,7 @@ export const JobNoteForm: React.FC = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    console.log('Saving Job Note:', jobNote);
+    // console.log('Saving Job Note:', jobNote);
     navigate('/system/job-notes');
   };
 

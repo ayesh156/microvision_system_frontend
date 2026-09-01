@@ -51,7 +51,7 @@ export const reminderService = {
     if (shopId) {
       url += `?shopId=${shopId}`;
     }
-    console.log('🔍 Fetching reminders from:', url);
+    // console.log('🔍 Fetching reminders from:', url);
     
     const response = await fetchWithAuth(url, {
       method: 'GET',
@@ -60,12 +60,12 @@ export const reminderService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('❌ Failed to fetch reminders:', response.status, errorData);
+      // console.error('❌ Failed to fetch reminders:', response.status, errorData);
       throw new Error(errorData.error || `Failed to fetch reminders: ${response.statusText}`);
     }
     
     const data: ReminderListResponse = await response.json();
-    console.log('✅ Reminders loaded:', data);
+    // console.log('✅ Reminders loaded:', data);
     
     if (!data.success) {
       throw new Error('Failed to fetch reminders');
@@ -82,7 +82,7 @@ export const reminderService = {
     if (shopId) {
       url += `&shopId=${shopId}`;
     }
-    console.log('🔍 Fetching customer reminders from:', url);
+    // console.log('🔍 Fetching customer reminders from:', url);
     
     const response = await fetchWithAuth(url, {
       method: 'GET',
@@ -91,12 +91,12 @@ export const reminderService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('❌ Failed to fetch customer reminders:', response.status, errorData);
+      // console.error('❌ Failed to fetch customer reminders:', response.status, errorData);
       throw new Error(errorData.error || `Failed to fetch reminders: ${response.statusText}`);
     }
     
     const data: ReminderListResponse = await response.json();
-    console.log('✅ Customer reminders loaded:', data);
+    // console.log('✅ Customer reminders loaded:', data);
     
     if (!data.success) {
       throw new Error('Failed to fetch reminders');
@@ -194,7 +194,7 @@ export const grnReminderService = {
     if (shopId) {
       url += `?shopId=${shopId}`;
     }
-    console.log('🔍 Fetching GRN reminders from:', url);
+    // console.log('🔍 Fetching GRN reminders from:', url);
     
     const response = await fetchWithAuth(url, {
       method: 'GET',
@@ -203,12 +203,12 @@ export const grnReminderService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      console.error('❌ Failed to fetch GRN reminders:', response.status, errorData);
+      // console.error('❌ Failed to fetch GRN reminders:', response.status, errorData);
       throw new Error(errorData.error || `Failed to fetch reminders: ${response.statusText}`);
     }
     
     const data: GRNReminderListResponse = await response.json();
-    console.log('✅ GRN Reminders loaded:', data);
+    // console.log('✅ GRN Reminders loaded:', data);
     
     if (!data.success) {
       throw new Error('Failed to fetch GRN reminders');
@@ -228,7 +228,7 @@ export const grnReminderService = {
     if (reminder.shopId) {
       url += `?shopId=${reminder.shopId}`;
     }
-    console.log('📤 Creating GRN reminder:', url, reminder);
+    // console.log('📤 Creating GRN reminder:', url, reminder);
     
     const response = await fetchWithAuth(url, {
       method: 'POST',
@@ -242,7 +242,7 @@ export const grnReminderService = {
     }
     
     const data: CreateGRNReminderResponse = await response.json();
-    console.log('✅ GRN Reminder created:', data);
+    // console.log('✅ GRN Reminder created:', data);
     
     if (!data.success) {
       throw new Error('Failed to create GRN reminder');

@@ -106,7 +106,7 @@ export const SupplierPaymentHistoryModal: React.FC<SupplierPaymentHistoryModalPr
         shopId, 
         supplierId
       });
-      console.log('GRN API result for supplier:', supplierId, result);
+      // console.log('GRN API result for supplier:', supplierId, result);
       if (result.success && result.data) {
         // Sort by date descending
         const sorted = result.data.sort((a, b) => 
@@ -116,7 +116,7 @@ export const SupplierPaymentHistoryModal: React.FC<SupplierPaymentHistoryModalPr
         setSupplierGRNs(sorted);
       }
     } catch (error) {
-      console.error('Error loading supplier GRNs:', error);
+      // console.error('Error loading supplier GRNs:', error);
     } finally {
       setIsLoadingGRNs(false);
     }

@@ -146,7 +146,7 @@ export const ShopBrandingTab: React.FC = () => {
         toast.error(result.error || 'Failed to upload logo');
       }
     } catch (err) {
-      console.error('Logo upload error:', err);
+      // console.error('Logo upload error:', err);
       toast.error('Failed to process logo');
     } finally {
       setIsUploadingLogo(false);

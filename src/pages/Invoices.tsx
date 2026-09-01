@@ -138,7 +138,7 @@ export const Invoices: React.FC = () => {
       setInvoices(loadedInvoices);
       setCustomers(loadedCustomers);
       setIsUsingAPI(true);
-      console.log('✅ Loaded invoices:', loadedInvoices.length, 'customers:', loadedCustomers.length, forceRefresh ? '(refreshed)' : '(from cache)');
+      // console.log('✅ Loaded invoices:', loadedInvoices.length, 'customers:', loadedCustomers.length, forceRefresh ? '(refreshed)' : '(from cache)');
     } catch (error) {
       console.warn('⚠️ API not available:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to load invoices');
@@ -175,7 +175,7 @@ export const Invoices: React.FC = () => {
   const previousShopIdRef = useRef<string | undefined>(effectiveShopId);
   useEffect(() => {
     if (previousShopIdRef.current !== effectiveShopId && initialLoadRef.current) {
-      console.log('🔄 Invoices: Shop changed from', previousShopIdRef.current, 'to', effectiveShopId, '- reloading');
+      // console.log('🔄 Invoices: Shop changed from', previousShopIdRef.current, 'to', effectiveShopId, '- reloading');
       previousShopIdRef.current = effectiveShopId;
       fetchInvoices(true);
     }
@@ -460,7 +460,7 @@ export const Invoices: React.FC = () => {
             shopId: effectiveShopId, // For SUPER_ADMIN viewing shops
           });
           reminderCount = result.reminderCount;
-          console.log('✅ Reminder saved to database, count:', reminderCount);
+          // console.log('✅ Reminder saved to database, count:', reminderCount);
         } catch (error) {
           console.warn('⚠️ Could not save reminder to database:', error);
           // Continue anyway - local tracking will still work
@@ -705,8 +705,8 @@ export const Invoices: React.FC = () => {
 
   const handleSaveEdit = async (updatedInvoice: Invoice, stockChanges: StockChange[]): Promise<void> => {
     setIsSaving(true);
-    console.log('🔄 Saving invoice:', updatedInvoice.id, 'apiId:', updatedInvoice.apiId, 'isUsingAPI:', isUsingAPI);
-    console.log('📦 Stock changes to apply:', stockChanges);
+    // console.log('🔄 Saving invoice:', updatedInvoice.id, 'apiId:', updatedInvoice.apiId, 'isUsingAPI:', isUsingAPI);
+    // console.log('📦 Stock changes to apply:', stockChanges);
     
     // Helper function to apply stock changes to products cache
     const applyStockChanges = (changes: StockChange[]) => {
@@ -717,7 +717,7 @@ export const Invoices: React.FC = () => {
           const change = changes.find(c => c.productId === product.id);
           if (change) {
             const newStock = Math.max(0, product.stock + change.quantityDelta);
-            console.log(`📦 Updated ${product.name} stock: ${product.stock} → ${newStock} (delta: ${change.quantityDelta})`);
+            // console.log(`📦 Updated ${product.name} stock: ${product.stock} → ${newStock} (delta: ${change.quantityDelta})`);
             return { ...product, stock: newStock };
           }
           return product;
@@ -765,19 +765,19 @@ export const Invoices: React.FC = () => {
           toast.success('Invoice updated successfully', {
             description: `Invoice #${updatedInvoice.id} has been updated.`,
           });
-          console.log('✅ Invoice updated via API');
+          // console.log('✅ Invoice updated via API');
           
           // Close modal and reset state on success
           setShowEditModal(false);
           setSelectedInvoice(null);
           
           // Refetch invoices to ensure consistency (async - no need to await)
-          console.log('📡 Refetching invoice data after edit...');
+          // console.log('📡 Refetching invoice data after edit...');
           fetchInvoices(true).catch(err => console.warn('Refetch warning:', err));
           
           return;
         } catch (error) {
-          console.error('❌ Failed to update invoice via API:', error);
+          // console.error('❌ Failed to update invoice via API:', error);
           toast.error('Failed to update invoice', {
             description: error instanceof Error ? error.message : 'Please try again.',
           });
@@ -824,9 +824,9 @@ export const Invoices: React.FC = () => {
           toast.success('Invoice deleted successfully', {
             description: `Invoice #${selectedInvoice.id} has been deleted.`,
           });
-          console.log('✅ Invoice deleted via API');
+          // console.log('✅ Invoice deleted via API');
         } catch (error) {
-          console.error('❌ Failed to delete invoice via API:', error);
+          // console.error('❌ Failed to delete invoice via API:', error);
           toast.error('Failed to delete invoice', {
             description: error instanceof Error ? error.message : 'Please try again.',
           });
@@ -884,10 +884,10 @@ export const Invoices: React.FC = () => {
         toast.success('Payment recorded successfully', {
           description: `Rs. ${amount.toLocaleString()} payment added to invoice #${invoiceId}.`,
         });
-        console.log('✅ Payment recorded via API');
+        // console.log('✅ Payment recorded via API');
         return;
       } catch (error) {
-        console.error('❌ Failed to record payment via API:', error);
+        // console.error('❌ Failed to record payment via API:', error);
         toast.error('Failed to record payment', {
           description: error instanceof Error ? error.message : 'Please try again.',
         });

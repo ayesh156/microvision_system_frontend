@@ -55,12 +55,12 @@ export const GRNReminderHistoryModal: React.FC<GRNReminderHistoryModalProps> = (
     setIsLoading(true);
     setError(null);
     try {
-      console.log('🔍 Loading reminders for GRN:', grnId);
+      // console.log('🔍 Loading reminders for GRN:', grnId);
       
       const result = await grnReminderService.getByGRN(grnId, effectiveShopId);
       setReminders(result.reminders || []);
     } catch (err) {
-      console.error('Failed to load GRN reminders:', err);
+      // console.error('Failed to load GRN reminders:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to load reminder history';
       if (errorMessage.includes('Not Found') || errorMessage.includes('not found')) {
         setError('No reminder history available');

@@ -203,10 +203,10 @@ export const ServiceForm: React.FC = () => {
         updatedAt: new Date().toISOString(),
       };
 
-      console.log('Service saved:', serviceData);
+      // console.log('Service saved:', serviceData);
       navigate('/system/services');
     } catch (error) {
-      console.error('Error saving service:', error);
+      // console.error('Error saving service:', error);
     } finally {
       setIsSubmitting(false);
     }

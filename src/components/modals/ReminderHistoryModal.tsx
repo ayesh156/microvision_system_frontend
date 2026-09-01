@@ -58,7 +58,7 @@ export const ReminderHistoryModal: React.FC<ReminderHistoryModalProps> = ({
     setIsLoading(true);
     setError(null);
     try {
-      console.log('🔍 Loading reminders for:', invoiceId ? `invoice ${invoiceId}` : `customer ${customerId}`);
+      // console.log('🔍 Loading reminders for:', invoiceId ? `invoice ${invoiceId}` : `customer ${customerId}`);
       
       let data: InvoiceReminder[];
       if (invoiceId) {
@@ -71,7 +71,7 @@ export const ReminderHistoryModal: React.FC<ReminderHistoryModalProps> = ({
       
       setReminders(data);
     } catch (err) {
-      console.error('Failed to load reminders:', err);
+      // console.error('Failed to load reminders:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to load reminder history';
       if (errorMessage.includes('Not Found') || errorMessage.includes('not found')) {
         setError('No reminder history available');

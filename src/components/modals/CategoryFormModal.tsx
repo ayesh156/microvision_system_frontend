@@ -117,7 +117,7 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
             isActive: freshCategoryData.isActive !== undefined ? freshCategoryData.isActive : true,
           });
         } catch (error) {
-          console.error('Failed to load category data:', error);
+          // console.error('Failed to load category data:', error);
           setLoadError(error instanceof Error ? error.message : 'Failed to load category details');
           // Fallback to passed category data
           setFormData({
@@ -223,7 +223,7 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
         setUploadProgress(0);
       }, 300);
     } catch (error) {
-      console.error('Image processing error:', error);
+      // console.error('Image processing error:', error);
       setUploadError('Failed to process image');
       setIsUploading(false);
       setUploadProgress(0);
@@ -349,7 +349,7 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
       onSave(newCategory);
       onClose();
     } catch (error) {
-      console.error('Failed to save category:', error);
+      // console.error('Failed to save category:', error);
       setUploadError(error instanceof Error ? error.message : 'Failed to save category');
     } finally {
       setIsSaving(false);
@@ -382,7 +382,7 @@ export const CategoryFormModal: React.FC<CategoryFormModalProps> = ({
         setCategorySuggestions(filtered);
         setShowSuggestions(filtered.length > 0);
       } catch (error) {
-        console.log('Failed to fetch suggestions:', error);
+        // console.log('Failed to fetch suggestions:', error);
         setCategorySuggestions([]);
         setShowSuggestions(false);
       } finally {

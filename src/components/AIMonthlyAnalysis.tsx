@@ -183,7 +183,7 @@ export const AIMonthlyAnalysis: React.FC = () => {
   const generateAnalysis = async () => {
     // Debug: Check API key status
     const apiKey = geminiService.getApiKey();
-    console.log('API Key Status:', {
+    // console.log('API Key Status:', {
       hasKey: !!apiKey,
       keyLength: apiKey?.length || 0,
       keyPrefix: apiKey?.substring(0, 10) + '...',
@@ -262,7 +262,7 @@ IMPORTANT LANGUAGE INSTRUCTION: ${languageInstructions[selectedLanguage]}`;
       setIsExpanded(true);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to generate analysis. Please try again.';
-      console.error('AI Analysis Error:', err);
+      // console.error('AI Analysis Error:', err);
       
       // Provide more helpful error message for common issues
       if (errorMessage.includes('403') || errorMessage.includes('Forbidden')) {

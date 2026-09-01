@@ -135,7 +135,7 @@ export const getSuppliers = async (shopId?: string): Promise<{ success: boolean;
     const suppliers = (result.data || []).map(convertAPISupplierToFrontend);
     return { success: true, data: suppliers };
   } catch (error) {
-    console.error('Error fetching suppliers:', error);
+    // console.error('Error fetching suppliers:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch suppliers' 
@@ -167,7 +167,7 @@ export const getSupplierById = async (id: string, shopId?: string): Promise<{ su
     const supplier = convertAPISupplierToFrontend(result.data);
     return { success: true, data: supplier };
   } catch (error) {
-    console.error('Error fetching supplier:', error);
+    // console.error('Error fetching supplier:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch supplier' 
@@ -201,7 +201,7 @@ export const createSupplier = async (supplierData: Partial<FrontendSupplier>, sh
     const supplier = convertAPISupplierToFrontend(result.data);
     return { success: true, data: supplier };
   } catch (error) {
-    console.error('Error creating supplier:', error);
+    // console.error('Error creating supplier:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to create supplier' 
@@ -238,7 +238,7 @@ export const updateSupplier = async (id: string, supplierData: Partial<FrontendS
     const supplier = convertAPISupplierToFrontend(result.data);
     return { success: true, data: supplier };
   } catch (error) {
-    console.error('Error updating supplier:', error);
+    // console.error('Error updating supplier:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to update supplier' 
@@ -269,7 +269,7 @@ export const deleteSupplier = async (id: string, shopId?: string): Promise<{ suc
 
     return { success: true, message: result.message };
   } catch (error) {
-    console.error('Error deleting supplier:', error);
+    // console.error('Error deleting supplier:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to delete supplier' 

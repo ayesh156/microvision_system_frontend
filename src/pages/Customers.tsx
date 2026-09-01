@@ -129,7 +129,7 @@ export const Customers: React.FC = () => {
   const effectiveShopWebsite = getFirstNonEmpty(branding?.website, (effectiveShop as any)?.website) || '';
   
   // Debug log to trace shop details (remove in production)
-  console.log('🏪 Shop Details Debug:', {
+  // console.log('🏪 Shop Details Debug:', {
     shopDetails: { name: shopDetails?.name, phone: shopDetails?.phone, address: shopDetails?.address },
     branding: { name: branding?.name, phone: branding?.phone, address: branding?.address },
     effectiveShop: { name: effectiveShop?.name, phone: effectiveShop?.phone, address: effectiveShop?.address },
@@ -174,7 +174,7 @@ export const Customers: React.FC = () => {
         setInvoices(frontendInvoices);
       }
     } catch (error) {
-      console.error('Failed to load invoices:', error);
+      // console.error('Failed to load invoices:', error);
       // Fallback to mock data on error
       if (invoices.length === 0) {
         setInvoices(mockInvoices);
@@ -206,7 +206,7 @@ export const Customers: React.FC = () => {
           window.history.replaceState({}, document.title);
         }
       } catch (error) {
-        console.error('Failed to load customers:', error);
+        // console.error('Failed to load customers:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to load customers');
         // Fallback to mock data
         setCustomers(mockCustomers);
@@ -835,7 +835,7 @@ export const Customers: React.FC = () => {
         setCustomers(deleteUpdater);
         setCachedCustomers(deleteUpdater); // Sync with cache for other pages
       } catch (error) {
-        console.error('Failed to delete customer:', error);
+        // console.error('Failed to delete customer:', error);
         // Still remove from UI for demo
         setCustomers(deleteUpdater);
         setCachedCustomers(deleteUpdater);
@@ -930,12 +930,12 @@ export const Customers: React.FC = () => {
 
         remainingPayment -= paymentForThisInvoice;
       } catch (error) {
-        console.error(`Failed to add payment to invoice ${invoice.invoiceNumber}:`, error);
+        // console.error(`Failed to add payment to invoice ${invoice.invoiceNumber}:`, error);
         // Continue with other invoices even if one fails
       }
     }
 
-    console.log('💰 Bulk payment distributed:', paymentResults);
+    // console.log('💰 Bulk payment distributed:', paymentResults);
 
     // Reload invoices to get updated state
     await loadInvoices(customerId);
@@ -971,7 +971,7 @@ export const Customers: React.FC = () => {
         } : null);
       }
     } catch (error) {
-      console.error('Failed to reload customer:', error);
+      // console.error('Failed to reload customer:', error);
     }
   };
 
@@ -1036,7 +1036,7 @@ export const Customers: React.FC = () => {
             return [...otherInvoices, ...updatedInvoices];
           });
         } catch (err) {
-          console.error('Failed to update invoice cache:', err);
+          // console.error('Failed to update invoice cache:', err);
         }
         
         // Reload customer data to get updated credit balance
@@ -1049,11 +1049,11 @@ export const Customers: React.FC = () => {
             updateCustomer(updatedCustomer as unknown as Customer);
           }
         } catch (err) {
-          console.error('Failed to reload customer:', err);
+          // console.error('Failed to reload customer:', err);
         }
       }
     } catch (error) {
-      console.error('Failed to record payment:', error);
+      // console.error('Failed to record payment:', error);
       // Show error to user - could add toast notification here
     }
   };
@@ -1226,7 +1226,7 @@ export const Customers: React.FC = () => {
         shopId: effectiveShopId, // For SUPER_ADMIN viewing shops
       });
       reminderCount = result.reminderCount;
-      console.log('✅ Reminder saved to database, count:', reminderCount);
+      // console.log('✅ Reminder saved to database, count:', reminderCount);
 
       // Update invoice in state with new reminder count
       setInvoices(prev => prev.map(inv => 

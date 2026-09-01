@@ -87,13 +87,13 @@ export const brandService = {
     if (params.shopId) queryParams.append('shopId', params.shopId);
 
     const url = `${API_BASE_URL}/brands?${queryParams.toString()}`;
-    console.log('📝 Fetching brands from:', url);
+    // console.log('📝 Fetching brands from:', url);
     const response = await fetchWithAuth(url, {
       headers: getAuthHeaders(),
     });
     const result = await handleResponse<APIResponse<APIBrand[]>>(response);
     
-    console.log('✅ Loaded brands from API:', result.data.length);
+    // console.log('✅ Loaded brands from API:', result.data.length);
     return {
       brands: result.data,
       pagination: result.pagination || { page: 1, limit: 50, total: result.data.length, totalPages: 1 }
@@ -118,7 +118,7 @@ export const brandService = {
    * Create a new brand
    */
   async create(data: CreateBrandDTO, shopId?: string): Promise<APIBrand> {
-    console.log('📝 Creating brand:', data.name);
+    // console.log('📝 Creating brand:', data.name);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/brands${queryParams}`, {
       method: 'POST',
@@ -126,7 +126,7 @@ export const brandService = {
       body: JSON.stringify(data),
     });
     const result = await handleResponse<APIResponse<APIBrand>>(response);
-    console.log('✅ Brand created:', result.data.id);
+    // console.log('✅ Brand created:', result.data.id);
     return result.data;
   },
 
@@ -134,7 +134,7 @@ export const brandService = {
    * Update an existing brand
    */
   async update(id: string, data: UpdateBrandDTO, shopId?: string): Promise<APIBrand> {
-    console.log('📝 Updating brand:', id);
+    // console.log('📝 Updating brand:', id);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/brands/${id}${queryParams}`, {
       method: 'PUT',
@@ -142,7 +142,7 @@ export const brandService = {
       body: JSON.stringify(data),
     });
     const result = await handleResponse<APIResponse<APIBrand>>(response);
-    console.log('✅ Brand updated:', result.data.id);
+    // console.log('✅ Brand updated:', result.data.id);
     return result.data;
   },
 
@@ -150,14 +150,14 @@ export const brandService = {
    * Delete a brand (Admin only)
    */
   async delete(id: string, shopId?: string): Promise<void> {
-    console.log('🗑️ Deleting brand:', id);
+    // console.log('🗑️ Deleting brand:', id);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/brands/${id}${queryParams}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
     await handleResponse<APIResponse<null>>(response);
-    console.log('✅ Brand deleted');
+    // console.log('✅ Brand deleted');
   },
 
   /**

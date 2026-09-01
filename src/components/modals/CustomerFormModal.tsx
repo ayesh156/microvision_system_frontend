@@ -255,7 +255,7 @@ export const CustomerFormModal: React.FC<CustomerFormModalProps> = ({
       }
       onClose();
     } catch (error) {
-      console.error('Failed to save customer:', error);
+      // console.error('Failed to save customer:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to save customer');
     } finally {
       setIsLoading(false);

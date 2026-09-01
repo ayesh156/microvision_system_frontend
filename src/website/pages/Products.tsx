@@ -92,7 +92,7 @@ export default function Products() {
         setBrands(brandRes.data.map((b: any) => b.name));
       }
     }).catch(err => {
-      console.error('Failed to load categories/brands:', err);
+      // console.error('Failed to load categories/brands:', err);
     });
   }, []);
 
@@ -115,7 +115,7 @@ export default function Products() {
       })
       .catch(err => {
         if (requestId !== requestIdRef.current) return;
-        console.error('Failed to load products:', err);
+        // console.error('Failed to load products:', err);
         setProducts([]);
       })
       .finally(() => {

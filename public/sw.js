@@ -26,11 +26,11 @@ const API_PATTERN = /\/api\//;
 
 // Install: Pre-cache critical assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing Service Worker...');
+  // console.log('[SW] Installing Service Worker...');
   event.waitUntil(
     caches.open(STATIC_CACHE)
       .then((cache) => {
-        console.log('[SW] Pre-caching critical assets');
+        // console.log('[SW] Pre-caching critical assets');
         return cache.addAll(PRECACHE_URLS);
       })
       .then(() => self.skipWaiting()) // Activate immediately
@@ -39,7 +39,7 @@ self.addEventListener('install', (event) => {
 
 // Activate: Clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating Service Worker...');
+  // console.log('[SW] Activating Service Worker...');
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -47,7 +47,7 @@ self.addEventListener('activate', (event) => {
           cacheNames
             .filter((name) => name.startsWith('ecotec-') && !name.startsWith(CACHE_VERSION))
             .map((name) => {
-              console.log('[SW] Deleting old cache:', name);
+              // console.log('[SW] Deleting old cache:', name);
               return caches.delete(name);
             })
         );
@@ -171,7 +171,7 @@ async function networkFirst(request, cacheName, maxAge) {
     // Network failed, try cache
     const cachedResponse = await cache.match(request);
     if (cachedResponse) {
-      console.log('[SW] Serving from cache (offline):', request.url);
+      // console.log('[SW] Serving from cache (offline):', request.url);
       return cachedResponse;
     }
     

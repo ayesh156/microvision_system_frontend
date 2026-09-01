@@ -118,7 +118,7 @@ export const Categories: React.FC = () => {
         }));
         setCategories(extendedCategories);
       } catch (error) {
-        console.error('Failed to load categories:', error);
+        // console.error('Failed to load categories:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to load categories');
         // Fallback to mock data
         setCategories(initialCategories);
@@ -363,7 +363,7 @@ export const Categories: React.FC = () => {
       setIsDeleteModalOpen(false);
       setCategoryToDelete(null);
     } catch (error) {
-      console.error('Failed to delete category:', error);
+      // console.error('Failed to delete category:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to delete category');
     }
   };
@@ -433,7 +433,7 @@ export const Categories: React.FC = () => {
       // Clear highlight after 5 seconds
       setTimeout(() => setHighlightedCategoryId(null), 5000);
     } catch (error) {
-      console.error('Failed to save category:', error);
+      // console.error('Failed to save category:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to save category');
     }
   };

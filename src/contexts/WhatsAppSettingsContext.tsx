@@ -138,7 +138,7 @@ export const WhatsAppSettingsProvider: React.FC<{ children: ReactNode }> = ({ ch
         setSettings(mockWhatsAppSettings);
       }
     } catch (err) {
-      console.error('❌ Failed to load WhatsApp settings:', err);
+      // console.error('❌ Failed to load WhatsApp settings:', err);
       setError('Failed to load settings');
       // Fallback to defaults
       setSettings(mockWhatsAppSettings);
@@ -234,7 +234,7 @@ export const WhatsAppSettingsProvider: React.FC<{ children: ReactNode }> = ({ ch
         throw new Error(errorData.message || 'Failed to save settings');
       }
     } catch (err) {
-      console.error('❌ Failed to save WhatsApp settings:', err);
+      // console.error('❌ Failed to save WhatsApp settings:', err);
       setError(err instanceof Error ? err.message : 'Failed to save settings');
       throw err;
     } finally {

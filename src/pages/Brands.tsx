@@ -95,7 +95,7 @@ export const Brands: React.FC = () => {
         }));
         setBrands(extendedBrands);
       } catch (error) {
-        console.error('Failed to load brands:', error);
+        // console.error('Failed to load brands:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to load brands');
         // Fallback to mock data
         setBrands(initialBrands);
@@ -345,7 +345,7 @@ export const Brands: React.FC = () => {
       setIsDeleteModalOpen(false);
       setBrandToDelete(null);
     } catch (error) {
-      console.error('Failed to delete brand:', error);
+      // console.error('Failed to delete brand:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to delete brand');
     }
   };
@@ -411,7 +411,7 @@ export const Brands: React.FC = () => {
       // Clear highlight after 5 seconds
       setTimeout(() => setHighlightedBrandId(null), 5000);
     } catch (error) {
-      console.error('Failed to save brand:', error);
+      // console.error('Failed to save brand:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to save brand');
     }
   };

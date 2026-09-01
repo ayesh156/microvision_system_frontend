@@ -232,12 +232,12 @@ export const ProductForm: React.FC = () => {
               lowStockThreshold: product.lowStockThreshold || 10,
             }));
           } catch (err) {
-            console.error('Failed to load product:', err);
+            // console.error('Failed to load product:', err);
             setApiError('Failed to load product details');
           }
         }
       } catch (error) {
-        console.error('Failed to load categories/brands:', error);
+        // console.error('Failed to load categories/brands:', error);
         // Fall back to hardcoded options if API fails
         setApiError('Failed to load categories and brands from server');
       } finally {
@@ -391,9 +391,9 @@ export const ProductForm: React.FC = () => {
                 const brandNameFromDb = bestDbMatch.brandName || analysisResult.brand;
                 const categoryNameFromDb = bestDbMatch.categoryName || analysisResult.category;
 
-                console.log('📦 Found in Database:', bestDbMatch.name);
-                console.log('   Brand:', brandNameFromDb, '→', matchedBrand?.name || 'Will be created');
-                console.log('   Category:', categoryNameFromDb, '→', matchedCategory?.name || 'Will be created');
+                // console.log('📦 Found in Database:', bestDbMatch.name);
+                // console.log('   Brand:', brandNameFromDb, '→', matchedBrand?.name || 'Will be created');
+                // console.log('   Category:', categoryNameFromDb, '→', matchedCategory?.name || 'Will be created');
 
                 // Store pending brand/category if not found in current shop
                 if (!matchedBrand && brandNameFromDb) {
@@ -437,13 +437,13 @@ export const ProductForm: React.FC = () => {
                   setTimeout(() => setAiAutoFillSuccess(false), 3000);
                 }
                 
-                console.log('✅ Product found in database and form auto-filled!');
+                // console.log('✅ Product found in database and form auto-filled!');
               } else {
                 // Not in database - use AI analysis result
                 const matchedBrand = findBestBrandMatch(analysisResult.brand);
                 const matchedCategory = findBestCategoryMatch(analysisResult.category);
 
-                console.log('🔍 New Product (AI) - Brand:', matchedBrand?.name || analysisResult.brand || 'None', '| Category:', matchedCategory?.name || analysisResult.category || 'None');
+                // console.log('🔍 New Product (AI) - Brand:', matchedBrand?.name || analysisResult.brand || 'None', '| Category:', matchedCategory?.name || analysisResult.category || 'None');
 
                 // Store pending brand/category if AI suggests but not found in current shop
                 if (!matchedBrand && analysisResult.brand) {
@@ -483,11 +483,11 @@ export const ProductForm: React.FC = () => {
                   setAiAutoFillSuccess(true);
                   setTimeout(() => setAiAutoFillSuccess(false), 3000);
                 }
-                console.log('✅ New product - AI details extracted and form auto-filled!');
+                // console.log('✅ New product - AI details extracted and form auto-filled!');
               }
             } catch (dbError) {
               // Database search failed - fall back to pure AI result
-              console.log('DB search failed, using AI result:', dbError);
+              // console.log('DB search failed, using AI result:', dbError);
               
               const matchedBrand = findBestBrandMatch(analysisResult.brand);
               const matchedCategory = findBestCategoryMatch(analysisResult.category);
@@ -533,13 +533,13 @@ export const ProductForm: React.FC = () => {
             }
           }
         } catch (analysisError) {
-          console.log('Image analysis failed:', analysisError);
+          // console.log('Image analysis failed:', analysisError);
         } finally {
           setIsAnalyzingImage(false);
         }
       }
     } catch (error) {
-      console.error('Upload failed:', error);
+      // console.error('Upload failed:', error);
       setErrors(prev => ({ 
         ...prev, 
         image: error instanceof Error ? error.message : 'Failed to upload image' 
@@ -644,7 +644,7 @@ export const ProductForm: React.FC = () => {
         const dbResults = await productService.getSuggestions(value);
         setDbSuggestions(dbResults);
       } catch (error) {
-        console.error('Database suggestion error:', error);
+        // console.error('Database suggestion error:', error);
         setDbSuggestions([]);
       }
     }, 300); // Faster for database (local)
@@ -660,7 +660,7 @@ export const ProductForm: React.FC = () => {
           const results = await geminiService.suggestProducts(value);
           setSuggestions(results);
         } catch (error) {
-          console.error('AI Suggestion error:', error);
+          // console.error('AI Suggestion error:', error);
           setSuggestions([]);
         } finally {
           setIsSearchingSuggestions(false);
@@ -756,7 +756,7 @@ export const ProductForm: React.FC = () => {
     const sellingPrice = suggestion.estimatedPrice || 0;
     const costPrice = Math.round(sellingPrice * 0.80);
 
-    console.log('🎯 AI Suggestion - Brand match:', matchedBrand?.name || 'None', '(from:', suggestion.brand, ') | Category match:', matchedCategory?.name || 'None', '(from:', suggestion.category, ')');
+    // console.log('🎯 AI Suggestion - Brand match:', matchedBrand?.name || 'None', '(from:', suggestion.brand, ') | Category match:', matchedCategory?.name || 'None', '(from:', suggestion.category, ')');
 
     setFormData(prev => ({
       ...prev,
@@ -849,9 +849,9 @@ export const ProductForm: React.FC = () => {
     // Calculate cost price if not provided
     const costPrice = suggestion.costPrice || Math.round((suggestion.price || 0) * 0.80);
 
-    console.log('📦 DB Suggestion - Using product:', suggestion.name);
-    console.log('   Brand:', suggestion.brandName, '→', matchedBrand?.name || 'Will be created');
-    console.log('   Category:', suggestion.categoryName, '→', matchedCategory?.name || 'Will be created');
+    // console.log('📦 DB Suggestion - Using product:', suggestion.name);
+    // console.log('   Brand:', suggestion.brandName, '→', matchedBrand?.name || 'Will be created');
+    // console.log('   Category:', suggestion.categoryName, '→', matchedCategory?.name || 'Will be created');
 
     // Store pending brand/category names if not found in current shop
     // Also store full data for creating with all details
@@ -926,7 +926,7 @@ export const ProductForm: React.FC = () => {
         setFormData(prev => ({ ...prev, description }));
       }
     } catch (error) {
-      console.error('Description generation error:', error);
+      // console.error('Description generation error:', error);
     } finally {
       setIsGeneratingDescription(false);
     }
@@ -1001,17 +1001,17 @@ export const ProductForm: React.FC = () => {
         const categoryNameToCreate = pendingCategoryName || formData.category;
         if (categoryNameToCreate) {
           try {
-            console.log('🆕 Creating category:', categoryNameToCreate);
+            // console.log('🆕 Creating category:', categoryNameToCreate);
             // Use full category data from suggestion if available
             const categoryCreateData = pendingCategoryData || { name: categoryNameToCreate };
-            console.log('   With data:', categoryCreateData);
+            // console.log('   With data:', categoryCreateData);
             const newCategory = await categoryService.create(categoryCreateData, currentShopId || undefined);
             categoryId = newCategory.id;
             setApiCategories(prev => [...prev, newCategory]);
             setPendingCategoryName(null);
             setPendingCategoryData(null);
           } catch (err) {
-            console.log('Category may already exist, continuing...');
+            // console.log('Category may already exist, continuing...');
           }
         }
       }
@@ -1022,17 +1022,17 @@ export const ProductForm: React.FC = () => {
         const brandNameToCreate = pendingBrandName || formData.brand;
         if (brandNameToCreate) {
           try {
-            console.log('🆕 Creating brand:', brandNameToCreate);
+            // console.log('🆕 Creating brand:', brandNameToCreate);
             // Use full brand data from suggestion if available
             const brandCreateData = pendingBrandData || { name: brandNameToCreate };
-            console.log('   With data:', brandCreateData);
+            // console.log('   With data:', brandCreateData);
             const newBrand = await brandService.create(brandCreateData, currentShopId || undefined);
             brandId = newBrand.id;
             setApiBrands(prev => [...prev, newBrand]);
             setPendingBrandName(null);
             setPendingBrandData(null);
           } catch (err) {
-            console.log('Brand may already exist, continuing...');
+            // console.log('Brand may already exist, continuing...');
           }
         }
       }
@@ -1097,7 +1097,7 @@ export const ProductForm: React.FC = () => {
         } 
       });
     } catch (error) {
-      console.error('Failed to save product:', error);
+      // console.error('Failed to save product:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to save product');
     } finally {
       setIsSaving(false);

@@ -116,7 +116,7 @@ const SectionVisibilityTab: React.FC<SectionVisibilityTabProps> = ({
       await onUpdateSections(localHiddenSections);
       toast.success('Section visibility updated successfully!');
     } catch (error) {
-      console.error('Failed to save sections:', error);
+      // console.error('Failed to save sections:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to save sections');
     } finally {
       setIsSaving(false);
@@ -414,7 +414,7 @@ export const ShopAdminPanel: React.FC = () => {
       setStats(statsData.data);
       setUsers(usersData.data);
     } catch (err) {
-      console.error('Error fetching data:', err);
+      // console.error('Error fetching data:', err);
       setError(err instanceof Error ? err.message : 'Failed to load data');
     } finally {
       setIsLoading(false);

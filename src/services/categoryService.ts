@@ -81,13 +81,13 @@ export const categoryService = {
     if (params.shopId) queryParams.append('shopId', params.shopId);
 
     const url = `${API_BASE_URL}/categories?${queryParams.toString()}`;
-    console.log('📝 Fetching categories from:', url);
+    // console.log('📝 Fetching categories from:', url);
     const response = await fetchWithAuth(url, {
       headers: getAuthHeaders(),
     });
     const result = await handleResponse<APIResponse<APICategory[]>>(response);
     
-    console.log('✅ Loaded categories from API:', result.data.length);
+    // console.log('✅ Loaded categories from API:', result.data.length);
     return {
       categories: result.data,
       pagination: result.pagination || { page: 1, limit: 50, total: result.data.length, totalPages: 1 }
@@ -112,7 +112,7 @@ export const categoryService = {
    * Create a new category
    */
   async create(data: CreateCategoryDTO, shopId?: string): Promise<APICategory> {
-    console.log('📝 Creating category:', data.name);
+    // console.log('📝 Creating category:', data.name);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/categories${queryParams}`, {
       method: 'POST',
@@ -120,7 +120,7 @@ export const categoryService = {
       body: JSON.stringify(data),
     });
     const result = await handleResponse<APIResponse<APICategory>>(response);
-    console.log('✅ Category created:', result.data.id);
+    // console.log('✅ Category created:', result.data.id);
     return result.data;
   },
 
@@ -128,7 +128,7 @@ export const categoryService = {
    * Update an existing category
    */
   async update(id: string, data: UpdateCategoryDTO, shopId?: string): Promise<APICategory> {
-    console.log('📝 Updating category:', id);
+    // console.log('📝 Updating category:', id);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/categories/${id}${queryParams}`, {
       method: 'PUT',
@@ -136,7 +136,7 @@ export const categoryService = {
       body: JSON.stringify(data),
     });
     const result = await handleResponse<APIResponse<APICategory>>(response);
-    console.log('✅ Category updated:', result.data.id);
+    // console.log('✅ Category updated:', result.data.id);
     return result.data;
   },
 
@@ -144,14 +144,14 @@ export const categoryService = {
    * Delete a category (Admin only)
    */
   async delete(id: string, shopId?: string): Promise<void> {
-    console.log('🗑️ Deleting category:', id);
+    // console.log('🗑️ Deleting category:', id);
     const queryParams = shopId ? `?shopId=${shopId}` : '';
     const response = await fetchWithAuth(`${API_BASE_URL}/categories/${id}${queryParams}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
     });
     await handleResponse<APIResponse<null>>(response);
-    console.log('✅ Category deleted');
+    // console.log('✅ Category deleted');
   },
 
   /**

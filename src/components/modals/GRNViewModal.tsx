@@ -236,7 +236,7 @@ export const GRNViewModal: React.FC<GRNViewModalProps> = ({
       });
       setShowActions(false);
     } catch (error) {
-      console.error('Failed to download PDF:', error);
+      // console.error('Failed to download PDF:', error);
       toast.error('Failed to download PDF', {
         id: 'grn-pdf-download',
         description: error instanceof Error ? error.message : 'Please try again',
@@ -305,7 +305,7 @@ Thank you for your service! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      console.error('❌ Failed to send via WhatsApp:', error);
+      // console.error('❌ Failed to send via WhatsApp:', error);
       toast.error('Failed to prepare WhatsApp', {
         id: 'grn-whatsapp-pdf',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -331,7 +331,7 @@ Thank you for your service! 🙏`;
 
       // Send email WITHOUT PDF attachment (faster, more reliable)
       const grnId = grn.apiId || grn.id;
-      console.log('📧 Sending GRN email (no PDF), grnId:', grnId);
+      // console.log('📧 Sending GRN email (no PDF), grnId:', grnId);
       const token = getAccessToken();
       const result = await grnService.sendEmailWithPDF(grnId, undefined, token, effectiveShopId);
 
@@ -341,7 +341,7 @@ Thank you for your service! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      console.error('❌ Failed to send GRN email:', error);
+      // console.error('❌ Failed to send GRN email:', error);
       toast.error('Failed to send email', {
         id: 'grn-email-quick',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -384,7 +384,7 @@ Thank you for your service! 🙏`;
           scale: 1.5,
           margin: 5,
         });
-        console.log('📧 GRN PDF generated, size:', pdfBase64?.length || 0, 'bytes');
+        // console.log('📧 GRN PDF generated, size:', pdfBase64?.length || 0, 'bytes');
       } catch (pdfError) {
         console.warn('⚠️ PDF generation failed, will send email without PDF:', pdfError);
         pdfBase64 = undefined;
@@ -394,7 +394,7 @@ Thank you for your service! 🙏`;
 
       // Step 2: Send email via backend with fresh token (use apiId - the database UUID)
       const grnId = grn.apiId || grn.id;
-      console.log('📧 Sending GRN email, grnId:', grnId, 'apiId:', grn.apiId, 'id:', grn.id);
+      // console.log('📧 Sending GRN email, grnId:', grnId, 'apiId:', grn.apiId, 'id:', grn.id);
       const token = getAccessToken();
       
       try {
@@ -417,7 +417,7 @@ Thank you for your service! 🙏`;
                           errorMessage.toLowerCase().includes('connection');
         
         if (isTimeout && pdfBase64) {
-          console.log('⚠️ Email with PDF timed out, retrying without PDF...');
+          // console.log('⚠️ Email with PDF timed out, retrying without PDF...');
           toast.loading('Retrying without PDF attachment...', { id: 'grn-email-pdf' });
           
           // Retry without PDF
@@ -434,7 +434,7 @@ Thank you for your service! 🙏`;
         }
       }
     } catch (error) {
-      console.error('❌ Failed to send GRN email:', error);
+      // console.error('❌ Failed to send GRN email:', error);
       toast.error('Failed to send email', {
         id: 'grn-email-pdf',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -522,7 +522,7 @@ Thank you for your service! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      console.error('❌ Failed to send reminder:', error);
+      // console.error('❌ Failed to send reminder:', error);
       toast.error('Failed to send reminder', {
         description: error instanceof Error ? error.message : 'Please try again',
       });

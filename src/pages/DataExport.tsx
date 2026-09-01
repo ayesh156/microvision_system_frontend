@@ -117,7 +117,7 @@ export const DataExport: React.FC = () => {
       downloadCSV(csvContent, `eco_system_${config.tableName}.csv`);
       setExportStatus(prev => [...prev.filter(s => s.table !== key), { table: key, success: true }]);
     } catch (error) {
-      console.error(`Error exporting ${key}:`, error);
+      // console.error(`Error exporting ${key}:`, error);
       setExportStatus(prev => [...prev.filter(s => s.table !== key), { table: key, success: false }]);
     }
   };
@@ -139,7 +139,7 @@ export const DataExport: React.FC = () => {
         setExportStatus(prev => [...prev.filter(s => s.table !== key), { table: key, success: true }]);
       });
     } catch (error) {
-      console.error('Error exporting combined CSV:', error);
+      // console.error('Error exporting combined CSV:', error);
     }
   };
 
@@ -156,7 +156,7 @@ export const DataExport: React.FC = () => {
       
       downloadSQL(schemaContent, `eco_system_${config.tableName}_schema.sql`);
     } catch (error) {
-      console.error(`Error downloading schema for ${key}:`, error);
+      // console.error(`Error downloading schema for ${key}:`, error);
     }
   };
 
@@ -168,7 +168,7 @@ export const DataExport: React.FC = () => {
       downloadSQL(sqlContent, `eco_system_${config.tableName}_complete.sql`);
       setExportStatus(prev => [...prev.filter(s => s.table !== key), { table: key, success: true }]);
     } catch (error) {
-      console.error(`Error exporting ${key}:`, error);
+      // console.error(`Error exporting ${key}:`, error);
       setExportStatus(prev => [...prev.filter(s => s.table !== key), { table: key, success: false }]);
     }
   };

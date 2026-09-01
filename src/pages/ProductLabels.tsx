@@ -46,7 +46,7 @@ const BarcodeDisplay: React.FC<{
           background: 'transparent',
         });
       } catch (error) {
-        console.error('Barcode generation error:', error);
+        // console.error('Barcode generation error:', error);
       }
     }
   }, [value, width, height, displayValue, fontSize]);

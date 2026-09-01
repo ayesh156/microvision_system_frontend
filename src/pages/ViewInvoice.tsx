@@ -102,11 +102,11 @@ export const ViewInvoice: React.FC = () => {
         setInvoices([convertedInvoice]);
         setApiInvoiceId(apiInvoice.id); // Store actual API ID
         setIsUsingAPI(true);
-        console.log('✅ Loaded invoice from API:', convertedInvoice.id);
+        // console.log('✅ Loaded invoice from API:', convertedInvoice.id);
       } else {
         // Invoice not found
         setIsUsingAPI(false);
-        console.log('⚠️ Invoice not found in API');
+        // console.log('⚠️ Invoice not found in API');
       }
     } catch (error) {
       console.warn('⚠️ API not available:', error);
@@ -417,7 +417,7 @@ export const ViewInvoice: React.FC = () => {
             shopId: effectiveShopId,
           });
           reminderCount = result.reminderCount;
-          console.log('✅ Reminder saved to database, count:', reminderCount);
+          // console.log('✅ Reminder saved to database, count:', reminderCount);
         } catch (error) {
           console.warn('⚠️ Could not save reminder to database:', error);
           // Continue anyway - local tracking will still work
@@ -491,11 +491,11 @@ export const ViewInvoice: React.FC = () => {
         toast.success('Payment recorded successfully', {
           description: `Rs. ${amount.toLocaleString()} payment added to invoice #${invoiceId}.`,
         });
-        console.log('✅ Payment recorded via API');
+        // console.log('✅ Payment recorded via API');
         // Don't close modal here - let success animation play
         return;
       } catch (error) {
-        console.error('❌ Failed to record payment via API:', error);
+        // console.error('❌ Failed to record payment via API:', error);
         toast.error('Failed to record payment', {
           description: error instanceof Error ? error.message : 'Please try again.',
         });
@@ -558,7 +558,7 @@ export const ViewInvoice: React.FC = () => {
           const change = changes.find(c => c.productId === product.id);
           if (change) {
             const newStock = Math.max(0, product.stock + change.quantityDelta);
-            console.log(`📦 Updated ${product.name} stock: ${product.stock} → ${newStock} (delta: ${change.quantityDelta})`);
+            // console.log(`📦 Updated ${product.name} stock: ${product.stock} → ${newStock} (delta: ${change.quantityDelta})`);
             return { ...product, stock: newStock };
           }
           return product;
@@ -604,7 +604,7 @@ export const ViewInvoice: React.FC = () => {
           setShowEditModal(false);
           return;
         } catch (error) {
-          console.error('❌ Failed to update invoice via API:', error);
+          // console.error('❌ Failed to update invoice via API:', error);
           toast.error('Failed to update invoice', {
             description: error instanceof Error ? error.message : 'Please try again.',
           });
@@ -663,7 +663,7 @@ export const ViewInvoice: React.FC = () => {
           scale: 1.5,   // Reduced scale for smaller file size
           margin: 5,
         });
-        console.log('📧 PDF generated, size:', pdfBase64?.length || 0, 'bytes');
+        // console.log('📧 PDF generated, size:', pdfBase64?.length || 0, 'bytes');
       } catch (pdfError) {
         console.warn('⚠️ PDF generation failed, will send email without PDF:', pdfError);
         pdfBase64 = undefined;
@@ -705,7 +705,7 @@ export const ViewInvoice: React.FC = () => {
         description: `Invoice #${invoice.id} email sent to ${result.sentTo}`,
       });
     } catch (error) {
-      console.error('❌ Failed to send invoice email:', error);
+      // console.error('❌ Failed to send invoice email:', error);
       toast.error('Failed to send email', {
         id: 'email-pdf',
         description: error instanceof Error ? error.message : 'Please check SMTP settings.',
@@ -778,7 +778,7 @@ Thank you for your business! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      console.error('❌ Failed to send via WhatsApp:', error);
+      // console.error('❌ Failed to send via WhatsApp:', error);
       toast.error('Failed to prepare WhatsApp', { 
         id: 'whatsapp-pdf',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -815,7 +815,7 @@ Thank you for your business! 🙏`;
         description: `Invoice ${invoice.id} saved successfully` 
       });
     } catch (error) {
-      console.error('Failed to download PDF:', error);
+      // console.error('Failed to download PDF:', error);
       toast.error('Failed to download PDF', { 
         id: 'pdf-download',
         description: error instanceof Error ? error.message : 'Please try again' 
