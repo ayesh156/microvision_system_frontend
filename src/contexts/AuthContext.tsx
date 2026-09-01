@@ -196,7 +196,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.logout();
     } catch (err) {
-      // console.error('Logout error:', err);
+      console.error('Logout error:', err);
     } finally {
       setUser(null);
       setCachedUser(null);
@@ -213,7 +213,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.logoutAll();
     } catch (err) {
-      // console.error('Logout all error:', err);
+      console.error('Logout all error:', err);
     } finally {
       setUser(null);
       setCachedUser(null);
@@ -259,7 +259,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(response.data.user);
       setCachedUser(response.data.user);
     } catch (err) {
-      // console.error('Failed to refresh user:', err);
+      console.error('Failed to refresh user:', err);
     }
   }, []);
 

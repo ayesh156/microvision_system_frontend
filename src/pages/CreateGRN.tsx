@@ -124,7 +124,7 @@ export const CreateGRN: React.FC = () => {
           setSuppliers(apiSuppliers);
         }
       } catch (error) {
-        // console.error('Error loading suppliers:', error);
+        console.error('Error loading suppliers:', error);
         toast.error('Failed to load suppliers', {
           description: 'Please refresh the page to try again',
           duration: 4000,
@@ -151,7 +151,7 @@ export const CreateGRN: React.FC = () => {
           setProducts(frontendProducts);
         }
       } catch (error) {
-        // console.error('Error loading products:', error);
+        console.error('Error loading products:', error);
         toast.error('Failed to load products', {
           description: 'Please refresh the page to try again',
           duration: 4000,
@@ -223,7 +223,7 @@ export const CreateGRN: React.FC = () => {
         setShowSupplierFormModal(false);
       }
     } catch (err) {
-      // console.error('Error saving supplier:', err);
+      console.error('Error saving supplier:', err);
       // Fallback: add locally
       setSuppliers(prev => [newSupplier, ...prev]);
       setSelectedSupplier(newSupplier.id);
@@ -499,7 +499,7 @@ export const CreateGRN: React.FC = () => {
         return; // Don't proceed to print preview
       }
     } catch (error) {
-      // console.error('Error creating GRN:', error);
+      console.error('Error creating GRN:', error);
       toast.error('Failed to create GRN', {
         description: error instanceof Error ? error.message : 'Please try again',
         duration: 5000,

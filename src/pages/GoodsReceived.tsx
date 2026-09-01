@@ -140,7 +140,7 @@ export const GoodsReceived: React.FC = () => {
         setSuppliers([]);
       }
     } catch (err) {
-      // console.error('Error loading data:', err);
+      console.error('Error loading data:', err);
       setError('Failed to load data');
       // No fallback - show empty state
       setGRNs([]);
@@ -329,7 +329,7 @@ export const GoodsReceived: React.FC = () => {
           return;
         }
       } catch (err) {
-        // console.error('Error fetching full GRN:', err);
+        console.error('Error fetching full GRN:', err);
       }
     }
     // Fallback to existing data
@@ -349,7 +349,7 @@ export const GoodsReceived: React.FC = () => {
           return;
         }
       } catch (err) {
-        // console.error('Error fetching full GRN:', err);
+        console.error('Error fetching full GRN:', err);
       }
     }
     setSelectedGRN(grn);
@@ -389,7 +389,7 @@ export const GoodsReceived: React.FC = () => {
         }
       }
     } catch (err) {
-      // console.error('Error saving GRN:', err);
+      console.error('Error saving GRN:', err);
       toast.error('Failed to save GRN', {
         description: err instanceof Error ? err.message : 'Please try again',
         duration: 4000,
@@ -426,7 +426,7 @@ export const GoodsReceived: React.FC = () => {
           throw new Error('Cannot delete: GRN not saved to database');
         }
       } catch (err) {
-        // console.error('Error deleting GRN:', err);
+        console.error('Error deleting GRN:', err);
         toast.error('Failed to delete GRN', {
           description: err instanceof Error ? err.message : 'Please try again',
           duration: 4000,
@@ -486,7 +486,7 @@ export const GoodsReceived: React.FC = () => {
         throw new Error(result.error || 'Failed to record payment');
       }
     } catch (err) {
-      // console.error('Error recording GRN payment:', err);
+      console.error('Error recording GRN payment:', err);
       toast.error('Failed to record payment', {
         description: err instanceof Error ? err.message : 'Please try again',
         duration: 4000,
@@ -580,7 +580,7 @@ export const GoodsReceived: React.FC = () => {
         duration: 3000,
       });
     } catch (error) {
-      // console.error('Failed to send reminder:', error);
+      console.error('Failed to send reminder:', error);
       toast.error('Failed to send reminder', {
         description: error instanceof Error ? error.message : 'Please try again',
       });

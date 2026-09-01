@@ -160,7 +160,7 @@ export const ShopSettings: React.FC = () => {
           updateBranding({ logo: result.url });
           toast.success('Logo uploaded successfully!');
         } catch (uploadError) {
-          // console.error('Local upload failed:', uploadError);
+          console.error('Local upload failed:', uploadError);
           toast.error('Failed to upload logo to server');
         } finally {
           setIsUploadingLogo(false);
@@ -189,7 +189,7 @@ export const ShopSettings: React.FC = () => {
         toast.error(result.error || 'Failed to upload logo');
       }
     } catch (err) {
-      // console.error('Logo upload error:', err);
+      console.error('Logo upload error:', err);
       toast.error('Failed to process logo');
     } finally {
       setIsUploadingLogo(false);

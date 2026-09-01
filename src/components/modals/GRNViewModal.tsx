@@ -236,7 +236,7 @@ export const GRNViewModal: React.FC<GRNViewModalProps> = ({
       });
       setShowActions(false);
     } catch (error) {
-      // console.error('Failed to download PDF:', error);
+      console.error('Failed to download PDF:', error);
       toast.error('Failed to download PDF', {
         id: 'grn-pdf-download',
         description: error instanceof Error ? error.message : 'Please try again',
@@ -305,7 +305,7 @@ Thank you for your service! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      // console.error('❌ Failed to send via WhatsApp:', error);
+      console.error('❌ Failed to send via WhatsApp:', error);
       toast.error('Failed to prepare WhatsApp', {
         id: 'grn-whatsapp-pdf',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -341,7 +341,7 @@ Thank you for your service! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      // console.error('❌ Failed to send GRN email:', error);
+      console.error('❌ Failed to send GRN email:', error);
       toast.error('Failed to send email', {
         id: 'grn-email-quick',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -434,7 +434,7 @@ Thank you for your service! 🙏`;
         }
       }
     } catch (error) {
-      // console.error('❌ Failed to send GRN email:', error);
+      console.error('❌ Failed to send GRN email:', error);
       toast.error('Failed to send email', {
         id: 'grn-email-pdf',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -522,7 +522,7 @@ Thank you for your service! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      // console.error('❌ Failed to send reminder:', error);
+      console.error('❌ Failed to send reminder:', error);
       toast.error('Failed to send reminder', {
         description: error instanceof Error ? error.message : 'Please try again',
       });

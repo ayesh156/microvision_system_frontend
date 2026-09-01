@@ -232,12 +232,12 @@ export const ProductForm: React.FC = () => {
               lowStockThreshold: product.lowStockThreshold || 10,
             }));
           } catch (err) {
-            // console.error('Failed to load product:', err);
+            console.error('Failed to load product:', err);
             setApiError('Failed to load product details');
           }
         }
       } catch (error) {
-        // console.error('Failed to load categories/brands:', error);
+        console.error('Failed to load categories/brands:', error);
         // Fall back to hardcoded options if API fails
         setApiError('Failed to load categories and brands from server');
       } finally {
@@ -539,7 +539,7 @@ export const ProductForm: React.FC = () => {
         }
       }
     } catch (error) {
-      // console.error('Upload failed:', error);
+      console.error('Upload failed:', error);
       setErrors(prev => ({ 
         ...prev, 
         image: error instanceof Error ? error.message : 'Failed to upload image' 
@@ -644,7 +644,7 @@ export const ProductForm: React.FC = () => {
         const dbResults = await productService.getSuggestions(value);
         setDbSuggestions(dbResults);
       } catch (error) {
-        // console.error('Database suggestion error:', error);
+        console.error('Database suggestion error:', error);
         setDbSuggestions([]);
       }
     }, 300); // Faster for database (local)
@@ -660,7 +660,7 @@ export const ProductForm: React.FC = () => {
           const results = await geminiService.suggestProducts(value);
           setSuggestions(results);
         } catch (error) {
-          // console.error('AI Suggestion error:', error);
+          console.error('AI Suggestion error:', error);
           setSuggestions([]);
         } finally {
           setIsSearchingSuggestions(false);
@@ -926,7 +926,7 @@ export const ProductForm: React.FC = () => {
         setFormData(prev => ({ ...prev, description }));
       }
     } catch (error) {
-      // console.error('Description generation error:', error);
+      console.error('Description generation error:', error);
     } finally {
       setIsGeneratingDescription(false);
     }
@@ -1097,7 +1097,7 @@ export const ProductForm: React.FC = () => {
         } 
       });
     } catch (error) {
-      // console.error('Failed to save product:', error);
+      console.error('Failed to save product:', error);
       setApiError(error instanceof Error ? error.message : 'Failed to save product');
     } finally {
       setIsSaving(false);

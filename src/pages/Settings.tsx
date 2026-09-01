@@ -336,7 +336,7 @@ export const Settings: React.FC = () => {
         await updateAdminHiddenSections(newAdminHiddenSections);
       }
     } catch (error) {
-      // console.error('❌ Failed to toggle section:', error);
+      console.error('❌ Failed to toggle section:', error);
     }
   };
 
@@ -1190,7 +1190,7 @@ export const Settings: React.FC = () => {
       toast.success('Settings saved successfully!');
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
-      // console.error('Failed to save settings:', error);
+      console.error('Failed to save settings:', error);
       toast.error('Failed to save settings');
     } finally {
       setIsSaving(false);

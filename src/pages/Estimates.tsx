@@ -64,7 +64,7 @@ export const Estimates: React.FC = () => {
         const converted = result.estimates.map(convertAPIEstimateToFrontend);
         setEstimates(converted);
       } catch (error) {
-        // console.error('Failed to fetch estimates:', error);
+        console.error('Failed to fetch estimates:', error);
         toast.error('Failed to load estimates');
       } finally {
         setIsLoading(false);
@@ -205,7 +205,7 @@ export const Estimates: React.FC = () => {
         setEstimates(prev => prev.filter(e => e.id !== estimateToDelete.id));
         toast.success(`Estimate ${estimateToDelete.estimateNumber} deleted`);
       } catch (error) {
-        // console.error('Failed to delete estimate:', error);
+        console.error('Failed to delete estimate:', error);
         toast.error('Failed to delete estimate');
       }
       setIsDeleteModalOpen(false);

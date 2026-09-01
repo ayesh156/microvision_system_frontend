@@ -305,7 +305,7 @@ export const getGRNs = async (params?: { status?: string; supplierId?: string; s
     const grns = (result.data || []).map(convertAPIGRNToFrontend);
     return { success: true, data: grns };
   } catch (error) {
-    // console.error('Error fetching GRNs:', error);
+    console.error('Error fetching GRNs:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch GRNs' 
@@ -337,7 +337,7 @@ export const getGRNById = async (id: string, shopId?: string): Promise<{ success
     const grn = convertAPIGRNToFrontend(result.data);
     return { success: true, data: grn };
   } catch (error) {
-    // console.error('Error fetching GRN:', error);
+    console.error('Error fetching GRN:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch GRN' 
@@ -383,7 +383,7 @@ export const createGRN = async (grnData: Partial<FrontendGRN>, shopId?: string):
 
     return { success: true, data: convertAPIGRNToFrontend(result.data) };
   } catch (error) {
-    // console.error('Error creating GRN:', error);
+    console.error('Error creating GRN:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to create GRN' 
@@ -423,7 +423,7 @@ export const getGRNStats = async (): Promise<{
 
     return { success: true, data: stats };
   } catch (error) {
-    // console.error('Error fetching GRN stats:', error);
+    console.error('Error fetching GRN stats:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to fetch GRN stats' 
@@ -455,7 +455,7 @@ export const deleteGRN = async (id: string, shopId?: string): Promise<{ success:
 
     return { success: true };
   } catch (error) {
-    // console.error('Error deleting GRN:', error);
+    console.error('Error deleting GRN:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to delete GRN' 
@@ -488,7 +488,7 @@ export const updateGRN = async (id: string, grnData: Partial<FrontendGRN>, shopI
 
     return { success: true, data: convertAPIGRNToFrontend(result.data) };
   } catch (error) {
-    // console.error('Error updating GRN:', error);
+    console.error('Error updating GRN:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to update GRN' 
@@ -529,7 +529,7 @@ export const recordGRNPayment = async (
 
     return { success: true, data: convertAPIGRNToFrontend(result.data) };
   } catch (error) {
-    // console.error('Error recording GRN payment:', error);
+    console.error('Error recording GRN payment:', error);
     return { 
       success: false, 
       error: error instanceof Error ? error.message : 'Failed to record payment' 
@@ -604,7 +604,7 @@ export const sendEmailWithPDF = async (
       hasPdfAttachment: result.data?.hasPdfAttachment || result.hasPdfAttachment || false,
     };
   } catch (error) {
-    // console.error('Error sending GRN email:', error);
+    console.error('Error sending GRN email:', error);
     // Handle AbortError (timeout) with a user-friendly message
     if (error instanceof DOMException && error.name === 'AbortError') {
       throw new Error('Connection timeout - the server took too long to respond. Please try again.');

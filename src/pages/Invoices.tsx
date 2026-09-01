@@ -777,7 +777,7 @@ export const Invoices: React.FC = () => {
           
           return;
         } catch (error) {
-          // console.error('❌ Failed to update invoice via API:', error);
+          console.error('❌ Failed to update invoice via API:', error);
           toast.error('Failed to update invoice', {
             description: error instanceof Error ? error.message : 'Please try again.',
           });
@@ -826,7 +826,7 @@ export const Invoices: React.FC = () => {
           });
           // console.log('✅ Invoice deleted via API');
         } catch (error) {
-          // console.error('❌ Failed to delete invoice via API:', error);
+          console.error('❌ Failed to delete invoice via API:', error);
           toast.error('Failed to delete invoice', {
             description: error instanceof Error ? error.message : 'Please try again.',
           });
@@ -887,7 +887,7 @@ export const Invoices: React.FC = () => {
         // console.log('✅ Payment recorded via API');
         return;
       } catch (error) {
-        // console.error('❌ Failed to record payment via API:', error);
+        console.error('❌ Failed to record payment via API:', error);
         toast.error('Failed to record payment', {
           description: error instanceof Error ? error.message : 'Please try again.',
         });

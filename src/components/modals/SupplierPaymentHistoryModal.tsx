@@ -116,7 +116,7 @@ export const SupplierPaymentHistoryModal: React.FC<SupplierPaymentHistoryModalPr
         setSupplierGRNs(sorted);
       }
     } catch (error) {
-      // console.error('Error loading supplier GRNs:', error);
+      console.error('Error loading supplier GRNs:', error);
     } finally {
       setIsLoadingGRNs(false);
     }

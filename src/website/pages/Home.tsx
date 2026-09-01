@@ -135,7 +135,7 @@ export default function Home() {
         }
       })
       .catch(err => {
-        // console.error('Failed to load homepage data:', err);
+        console.error('Failed to load homepage data:', err);
       })
       .finally(() => setLoading(false));
   }, []);

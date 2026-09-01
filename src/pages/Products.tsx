@@ -144,7 +144,7 @@ export const Products: React.FC = () => {
         setApiCategories(categoriesResult.categories);
         setApiBrands(brandsResult.brands);
       } catch (error) {
-        // console.error('Failed to load products:', error);
+        console.error('Failed to load products:', error);
         setApiError(error instanceof Error ? error.message : 'Failed to load products');
         // Fallback to mock data
         setProducts(mockProducts);
@@ -557,7 +557,7 @@ export const Products: React.FC = () => {
       setIsDeleteModalOpen(false);
       setProductToDelete(null);
     } catch (error) {
-      // console.error('Failed to delete product:', error);
+      console.error('Failed to delete product:', error);
       setDeleteError(error instanceof Error ? error.message : 'Failed to delete product');
     } finally {
       setIsDeleting(false);
@@ -595,7 +595,7 @@ export const Products: React.FC = () => {
       setProductSalesHistory(result.items);
       setSalesStats(result.stats);
     } catch (error) {
-      // console.error('Failed to load sales history:', error);
+      console.error('Failed to load sales history:', error);
       // Keep modal open but show empty state
     } finally {
       setIsLoadingSalesHistory(false);
@@ -631,7 +631,7 @@ export const Products: React.FC = () => {
       setStockMovements(movementsResult);
       setPriceHistory(historyResult);
     } catch (error) {
-      // console.error('Failed to load pricing data:', error);
+      console.error('Failed to load pricing data:', error);
     } finally {
       setIsLoadingPricingData(false);
     }

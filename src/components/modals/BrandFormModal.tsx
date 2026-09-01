@@ -120,7 +120,7 @@ export const BrandFormModal: React.FC<BrandFormModalProps> = ({
           // Track original image for deletion if changed
           setOriginalImageUrl(freshBrandData.image || '');
         } catch (error) {
-          // console.error('Failed to load brand data:', error);
+          console.error('Failed to load brand data:', error);
           setLoadError(error instanceof Error ? error.message : 'Failed to load brand details');
           // Fallback to passed brand data
           setFormData({
@@ -232,7 +232,7 @@ export const BrandFormModal: React.FC<BrandFormModalProps> = ({
         setUploadProgress(0);
       }, 300);
     } catch (error) {
-      // console.error('Image processing error:', error);
+      console.error('Image processing error:', error);
       setUploadError('Failed to process image');
       setIsUploading(false);
       setUploadProgress(0);
@@ -388,7 +388,7 @@ export const BrandFormModal: React.FC<BrandFormModalProps> = ({
       });
       onClose();
     } catch (error) {
-      // console.error('Failed to save brand:', error);
+      console.error('Failed to save brand:', error);
       setUploadError(error instanceof Error ? error.message : 'Failed to save brand');
     } finally {
       setIsSaving(false);

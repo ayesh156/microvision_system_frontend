@@ -216,7 +216,7 @@ export const AdminDashboard: React.FC = () => {
         setShopUsers(data.data.users);
       }
     } catch (err) {
-      // console.error('Failed to fetch shop users:', err);
+      console.error('Failed to fetch shop users:', err);
     }
   };
 

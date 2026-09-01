@@ -46,7 +46,7 @@ export const TaxSettingsProvider: React.FC<{ children: ReactNode }> = ({ childre
           setSettings(DEFAULT_TAX_SETTINGS);
         }
       } catch (error) {
-        // console.error('❌ Failed to load tax settings:', error);
+        console.error('❌ Failed to load tax settings:', error);
         setSettings(DEFAULT_TAX_SETTINGS);
       }
     };
@@ -74,7 +74,7 @@ export const TaxSettingsProvider: React.FC<{ children: ReactNode }> = ({ childre
       // });
       
     } catch (error) {
-      // console.error('❌ Failed to save tax settings:', error);
+      console.error('❌ Failed to save tax settings:', error);
       throw error;
     }
   };

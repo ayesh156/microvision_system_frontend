@@ -58,7 +58,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     return registration;
   } catch (error) {
-    // console.error('[SW] Registration failed:', error);
+    console.error('[SW] Registration failed:', error);
     return null;
   }
 }

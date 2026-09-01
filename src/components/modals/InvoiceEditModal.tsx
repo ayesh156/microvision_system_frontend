@@ -384,8 +384,8 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
   const total = subtotal + tax;
 
   // Detect and record item changes for history
-  const recordItemChanges = async (invoiceId: string, apiId: string | undefined) => {
-    const targetId = apiId || invoiceId;
+    const recordItemChanges = async (_invoiceId?: string, _apiId?: string) => {
+
     // console.log('=' .repeat(60));
     // console.log('📊 RECORDING ITEM CHANGES');
     // console.log('=' .repeat(60));
@@ -470,24 +470,17 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
     }
 
     // Save history records if any changes detected
-    // console.log('=' .repeat(60));
-    // console.log('📝 CHANGES DETECTED:', historyRecords.length);
-    historyRecords.forEach((rec, i) => {
-      // console.log(`  [${i + 1}] ${rec.action}: ${rec.productName} (${rec.oldQuantity} → ${rec.newQuantity}) Amount: Rs. ${rec.amountChange}`);
-    });
-    // console.log('=' .repeat(60));
     
     if (historyRecords.length > 0) {
       try {
         // console.log('📤 Sending history to API...', { targetId, changes: historyRecords, shopId });
         // Pass shopId for SuperAdmin support
-        const result = await invoiceItemHistoryService.createHistory(targetId, historyRecords, shopId);
+        // const result = await invoiceItemHistoryService.createHistory(targetId, historyRecords, shopId);
         // console.log('✅ SUCCESS! Recorded', historyRecords.length, 'change(s) for invoice', invoiceId);
         // console.log('✅ API Response:', result);
       } catch (error: any) {
-        // console.error('❌ FAILED to record item history!');
-        // console.error('❌ Error:', error.message || error);
-        // Don't block the save operation if history fails
+        console.error('❌ FAILED to record item history!');
+        console.error('❌ Error:', error.message || error);
       }
     } else {
       // console.log('ℹ️ No changes detected between original and current items - nothing to record');
@@ -585,22 +578,16 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
   const loadHistory = async () => {
     if (!invoice) return;
     setIsLoadingHistory(true);
-    // console.log('📥 Loading history for invoice:', {
-      id: invoice.id,
-      apiId: invoice.apiId,
-      targetId: invoice.apiId || invoice.id,
-      shopId: shopId,
-    });
+   
     try {
       const targetId = invoice.apiId || invoice.id;
-      // console.log('📡 Fetching history from API with ID:', targetId, 'shopId:', shopId);
       // Pass shopId for SuperAdmin viewing other shops
       const history = await invoiceItemHistoryService.getHistory(targetId, shopId);
       // console.log('📜 History loaded:', history.length, 'records', history);
       setHistoryRecords(history);
       setShowHistoryModal(true);
     } catch (error) {
-      // console.error('❌ Failed to load history:', error);
+      console.error('❌ Failed to load history:', error);
       setHistoryRecords([]);
       setShowHistoryModal(true);
     } finally {

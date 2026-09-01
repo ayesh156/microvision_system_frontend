@@ -178,7 +178,7 @@ export const ShopBrandingProvider: React.FC<ShopBrandingProviderProps> = ({ chil
         setBranding(fetchedBranding);
         setOriginalBranding(fetchedBranding);
       } catch (err) {
-        // console.error('Error loading shop branding:', err);
+        console.error('Error loading shop branding:', err);
         // Don't show error to user, just use defaults
       } finally {
         setIsLoading(false);

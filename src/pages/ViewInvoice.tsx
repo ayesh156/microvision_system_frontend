@@ -495,7 +495,7 @@ export const ViewInvoice: React.FC = () => {
         // Don't close modal here - let success animation play
         return;
       } catch (error) {
-        // console.error('❌ Failed to record payment via API:', error);
+        console.error('❌ Failed to record payment via API:', error);
         toast.error('Failed to record payment', {
           description: error instanceof Error ? error.message : 'Please try again.',
         });
@@ -604,7 +604,7 @@ export const ViewInvoice: React.FC = () => {
           setShowEditModal(false);
           return;
         } catch (error) {
-          // console.error('❌ Failed to update invoice via API:', error);
+          console.error('❌ Failed to update invoice via API:', error);
           toast.error('Failed to update invoice', {
             description: error instanceof Error ? error.message : 'Please try again.',
           });
@@ -705,7 +705,7 @@ export const ViewInvoice: React.FC = () => {
         description: `Invoice #${invoice.id} email sent to ${result.sentTo}`,
       });
     } catch (error) {
-      // console.error('❌ Failed to send invoice email:', error);
+      console.error('❌ Failed to send invoice email:', error);
       toast.error('Failed to send email', {
         id: 'email-pdf',
         description: error instanceof Error ? error.message : 'Please check SMTP settings.',
@@ -778,7 +778,7 @@ Thank you for your business! 🙏`;
       });
       setShowActions(false);
     } catch (error) {
-      // console.error('❌ Failed to send via WhatsApp:', error);
+      console.error('❌ Failed to send via WhatsApp:', error);
       toast.error('Failed to prepare WhatsApp', { 
         id: 'whatsapp-pdf',
         description: error instanceof Error ? error.message : 'Please try again.',
@@ -815,7 +815,7 @@ Thank you for your business! 🙏`;
         description: `Invoice ${invoice.id} saved successfully` 
       });
     } catch (error) {
-      // console.error('Failed to download PDF:', error);
+      console.error('Failed to download PDF:', error);
       toast.error('Failed to download PDF', { 
         id: 'pdf-download',
         description: error instanceof Error ? error.message : 'Please try again' 

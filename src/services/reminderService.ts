@@ -60,7 +60,7 @@ export const reminderService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      // console.error('❌ Failed to fetch reminders:', response.status, errorData);
+      console.error('❌ Failed to fetch reminders:', response.status, errorData);
       throw new Error(errorData.error || `Failed to fetch reminders: ${response.statusText}`);
     }
     
@@ -91,7 +91,7 @@ export const reminderService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      // console.error('❌ Failed to fetch customer reminders:', response.status, errorData);
+      console.error('❌ Failed to fetch customer reminders:', response.status, errorData);
       throw new Error(errorData.error || `Failed to fetch reminders: ${response.statusText}`);
     }
     
@@ -203,7 +203,7 @@ export const grnReminderService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      // console.error('❌ Failed to fetch GRN reminders:', response.status, errorData);
+      console.error('❌ Failed to fetch GRN reminders:', response.status, errorData);
       throw new Error(errorData.error || `Failed to fetch reminders: ${response.statusText}`);
     }
     

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
-import { mockJobNotes, mockCustomers, mockServices, mockTechnicians, generateJobNumber } from '../data/mockData';
-import type { JobNote, JobNotePriority, DeviceType, Customer } from '../data/mockData';
+import { mockJobNotes, mockCustomers, mockServices, mockTechnicians } from '../data/mockData';
+import type { JobNotePriority, DeviceType, Customer } from '../data/mockData';
 import { SearchableSelect } from '../components/ui/searchable-select';
 import {
   ArrowLeft, Save, Printer, User, Phone, MapPin,
@@ -288,39 +288,6 @@ export const JobNoteForm: React.FC = () => {
   const handleSubmit = () => {
     if (!validateForm()) return;
 
-    const jobNote: JobNote = {
-      id: isEditing && existingJob ? existingJob.id : Date.now().toString(),
-      jobNumber: isEditing && existingJob ? existingJob.jobNumber : generateJobNumber(),
-      customerId: formData.customerId || undefined,
-      customerName: formData.customerName,
-      customerPhone: formData.customerPhone,
-      customerAddress: formData.customerAddress || undefined,
-      deviceType: formData.deviceType,
-      deviceBrand: formData.deviceBrand,
-      deviceModel: formData.deviceModel,
-      serialNumber: formData.serialNumber || undefined,
-      accessories: formData.accessories ? formData.accessories.split(',').map(a => a.trim()).filter(Boolean) : [],
-      deviceCondition: formData.deviceCondition || undefined,
-      password: formData.password || undefined,
-      // Service link fields
-      serviceId: formData.serviceId || undefined,
-      serviceName: formData.serviceName || undefined,
-      reportedIssue: formData.reportedIssue,
-      diagnosis: formData.diagnosis || undefined,
-      internalNotes: formData.internalNotes || undefined,
-      estimatedCost: formData.estimatedCost || undefined,
-      advancePayment: formData.advancePayment || undefined,
-      status: isEditing && existingJob ? existingJob.status : 'received',
-      priority: formData.priority,
-      receivedDate: new Date(formData.receivedDate).toISOString(),
-      estimatedCompletion: formData.estimatedCompletion ? new Date(formData.estimatedCompletion).toISOString() : undefined,
-      assignedTechnician: formData.assignedTechnician || undefined,
-      customerNotified: false,
-      createdAt: isEditing && existingJob ? existingJob.createdAt : new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    // console.log('Saving Job Note:', jobNote);
     navigate('/system/job-notes');
   };
 

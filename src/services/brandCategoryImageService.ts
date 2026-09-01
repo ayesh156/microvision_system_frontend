@@ -143,7 +143,7 @@ export async function uploadBrandImage(
       });
 
     if (error) {
-      // console.error('Supabase brand image upload error:', error);
+      console.error('Supabase brand image upload error:', error);
       return {
         success: false,
         error: error.message || 'Failed to upload brand image',
@@ -162,7 +162,7 @@ export async function uploadBrandImage(
       path: data.path,
     };
   } catch (err) {
-    // console.error('Brand image upload error:', err);
+    console.error('Brand image upload error:', err);
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Failed to upload brand image',
@@ -214,7 +214,7 @@ export async function uploadCategoryImage(
       });
 
     if (error) {
-      // console.error('Supabase category image upload error:', error);
+      console.error('Supabase category image upload error:', error);
       return {
         success: false,
         error: error.message || 'Failed to upload category image',
@@ -233,7 +233,7 @@ export async function uploadCategoryImage(
       path: data.path,
     };
   } catch (err) {
-    // console.error('Category image upload error:', err);
+    console.error('Category image upload error:', err);
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Failed to upload category image',
@@ -290,7 +290,7 @@ export async function deleteBrandImage(url: string): Promise<{ success: boolean;
       .remove([filePath]);
 
     if (error) {
-      // console.error('Supabase brand image delete error:', error);
+      console.error('Supabase brand image delete error:', error);
       return {
         success: true,
         error: error.message,
@@ -299,7 +299,7 @@ export async function deleteBrandImage(url: string): Promise<{ success: boolean;
 
     return { success: true };
   } catch (err) {
-    // console.error('Brand image delete error:', err);
+    console.error('Brand image delete error:', err);
     return {
       success: true,
       error: err instanceof Error ? err.message : 'Failed to delete brand image',
@@ -332,7 +332,7 @@ export async function deleteCategoryImage(url: string): Promise<{ success: boole
       .remove([filePath]);
 
     if (error) {
-      // console.error('Supabase category image delete error:', error);
+      console.error('Supabase category image delete error:', error);
       return {
         success: true,
         error: error.message,
@@ -341,7 +341,7 @@ export async function deleteCategoryImage(url: string): Promise<{ success: boole
 
     return { success: true };
   } catch (err) {
-    // console.error('Category image delete error:', err);
+    console.error('Category image delete error:', err);
     return {
       success: true,
       error: err instanceof Error ? err.message : 'Failed to delete category image',

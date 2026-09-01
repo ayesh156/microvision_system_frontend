@@ -69,7 +69,7 @@ export const Quotations: React.FC = () => {
         const converted = result.quotations.map(convertAPIQuotationToFrontend);
         setQuotations(converted);
       } catch (error) {
-        // console.error('Failed to fetch quotations:', error);
+        console.error('Failed to fetch quotations:', error);
         toast.error('Failed to load quotations');
       } finally {
         setIsLoading(false);
@@ -216,7 +216,7 @@ export const Quotations: React.FC = () => {
         setQuotations(prev => prev.filter(q => q.id !== quotationToDelete.id));
         toast.success(`Quotation ${quotationToDelete.quotationNumber} deleted`);
       } catch (error) {
-        // console.error('Failed to delete quotation:', error);
+        console.error('Failed to delete quotation:', error);
         toast.error('Failed to delete quotation');
       }
       setIsDeleteModalOpen(false);

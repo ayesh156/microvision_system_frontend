@@ -103,7 +103,7 @@ export const Suppliers: React.FC = () => {
         toast.error('Failed to load suppliers');
       }
     } catch (err) {
-      // console.error('Error loading suppliers:', err);
+      console.error('Error loading suppliers:', err);
       setSuppliers([]);
       setError('Failed to load suppliers from server');
       toast.error('Failed to connect to server');
@@ -461,7 +461,7 @@ export const Suppliers: React.FC = () => {
         }
       }
     } catch (err) {
-      // console.error('Error saving supplier:', err);
+      console.error('Error saving supplier:', err);
       toast.error('Failed to save supplier', {
         description: err instanceof Error ? err.message : 'Please try again',
       });
@@ -487,7 +487,7 @@ export const Suppliers: React.FC = () => {
           throw new Error('Cannot delete: Supplier not saved to database');
         }
       } catch (err) {
-        // console.error('Error deleting supplier:', err);
+        console.error('Error deleting supplier:', err);
         toast.error('Failed to delete supplier', {
           description: err instanceof Error ? err.message : 'Please try again',
         });
@@ -586,7 +586,7 @@ export const Suppliers: React.FC = () => {
         throw new Error(result.error || 'Failed to record payment');
       }
     } catch (err) {
-      // console.error('Error recording GRN payment:', err);
+      console.error('Error recording GRN payment:', err);
       toast.error('Failed to record payment', {
         description: err instanceof Error ? err.message : 'Please try again',
         duration: 4000,

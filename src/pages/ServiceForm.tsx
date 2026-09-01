@@ -4,8 +4,6 @@ import { useTheme } from '../contexts/ThemeContext';
 import { 
   mockServices, 
   serviceCategories, 
-  generateServiceId,
-  type Service,
   type ServiceCategory,
   type DeviceType
 } from '../data/mockData';
@@ -186,27 +184,9 @@ export const ServiceForm: React.FC = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      const serviceData: Service = {
-        id: isEditing ? id! : generateServiceId(),
-        name: formData.name,
-        category: formData.category,
-        description: formData.description,
-        applicableDeviceTypes: formData.applicableDeviceTypes,
-        basePrice: formData.basePrice,
-        priceType: formData.priceType,
-        estimatedDuration: formData.estimatedDuration,
-        warranty: formData.warranty || undefined,
-        notes: formData.notes || undefined,
-        isActive: formData.isActive,
-        isPopular: formData.isPopular,
-        createdAt: isEditing ? (mockServices.find(s => s.id === id)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      // console.log('Service saved:', serviceData);
       navigate('/system/services');
     } catch (error) {
-      // console.error('Error saving service:', error);
+      console.error('Error saving service:', error);
     } finally {
       setIsSubmitting(false);
     }

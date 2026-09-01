@@ -99,7 +99,7 @@ export const GRNPaymentModal: React.FC<GRNPaymentModalProps> = ({
         }
       }
     } catch (err) {
-      // console.error('Error loading payment history:', err);
+      console.error('Error loading payment history:', err);
     } finally {
       setIsLoadingHistory(false);
     }
@@ -154,7 +154,7 @@ export const GRNPaymentModal: React.FC<GRNPaymentModalProps> = ({
         setShowSuccess(false);
       }, 1500);
     } catch (error) {
-      // console.error('Payment failed:', error);
+      console.error('Payment failed:', error);
     } finally {
       setIsProcessing(false);
     }

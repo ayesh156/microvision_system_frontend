@@ -83,7 +83,7 @@ export const invoiceItemHistoryService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      // console.error('📡 [HistoryService] GET failed:', errorData);
+      console.error('📡 [HistoryService] GET failed:', errorData);
       throw new Error(errorData.error || `Failed to fetch item history: ${response.statusText}`);
     }
     
@@ -124,7 +124,7 @@ export const invoiceItemHistoryService = {
     
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      // console.error('📡 [HistoryService] POST failed:', errorData);
+      console.error('📡 [HistoryService] POST failed:', errorData);
       throw new Error(errorData.error || `Failed to create item history: ${response.statusText}`);
     }
     

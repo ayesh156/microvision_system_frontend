@@ -94,7 +94,7 @@ export const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({
         setGRNs([]);
       }
     } catch (error) {
-      // console.error('Error loading GRNs:', error);
+      console.error('Error loading GRNs:', error);
       setGRNs([]);
     } finally {
       setIsLoading(false);
@@ -125,7 +125,7 @@ export const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({
         }
       }
     } catch (err) {
-      // console.error('Error loading payments for GRN:', err);
+      console.error('Error loading payments for GRN:', err);
     } finally {
       setLoadingPayments(prev => ({ ...prev, [grnId]: false }));
     }
