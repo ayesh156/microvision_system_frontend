@@ -5,6 +5,9 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   server: {
     // Fix WebSocket HMR connection issues
     // https://vite.dev/config/server-options.html#server-hmr
