@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import type { Invoice, InvoiceItem, Product } from '../../data/mockData';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { Plus, Trash2, Search, FileText, Package, Calendar, CheckCircle, XCircle, CircleDollarSign, CreditCard, AlertTriangle, History, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Trash2, Search, FileText, Calendar, CheckCircle, XCircle, CircleDollarSign, CreditCard, AlertTriangle, History, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog';
 import { Label } from '../ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { SearchableSelect } from '../ui/searchable-select';
 import { toast } from 'sonner';
-import { invoiceItemHistoryService, type CreateHistoryRequest, type ItemHistoryAction } from '../../services/invoiceItemHistoryService';
+import { invoiceItemHistoryService } from '../../services/invoiceItemHistoryService';
 
 // Stock change info for updating product cache after save
 export interface StockChange {
@@ -36,7 +36,7 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
   shopId, // For SUPER_ADMIN viewing other shops
 }) => {
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   
   const [items, setItems] = useState<InvoiceItem[]>([]);
   const [originalItems, setOriginalItems] = useState<InvoiceItem[]>([]); // Track original items for history
@@ -388,108 +388,108 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
   const total = subtotal + tax;
 
   // Detect and record item changes for history
-    const recordItemChanges = async (_invoiceId?: string, _apiId?: string) => {
+  //   const recordItemChanges = async (_invoiceId?: string, _apiId?: string) => {
 
-    // console.log('=' .repeat(60));
-    // console.log('📊 RECORDING ITEM CHANGES');
-    // console.log('=' .repeat(60));
-    // console.log('📊 Invoice IDs - display:', invoiceId, '| API:', apiId, '| Using:', targetId);
-    // console.log('📊 Original items count:', originalItems.length);
-    // console.log('📊 Original items:', JSON.stringify(originalItems.map(i => ({id: i.productId, name: i.productName, qty: i.quantity, price: i.unitPrice})), null, 2));
-    // console.log('📊 Current items count:', items.length);
-    // console.log('📊 Current items:', JSON.stringify(items.map(i => ({id: i.productId, name: i.productName, qty: i.quantity, price: i.unitPrice})), null, 2));
+  //   // console.log('=' .repeat(60));
+  //   // console.log('📊 RECORDING ITEM CHANGES');
+  //   // console.log('=' .repeat(60));
+  //   // console.log('📊 Invoice IDs - display:', invoiceId, '| API:', apiId, '| Using:', targetId);
+  //   // console.log('📊 Original items count:', originalItems.length);
+  //   // console.log('📊 Original items:', JSON.stringify(originalItems.map(i => ({id: i.productId, name: i.productName, qty: i.quantity, price: i.unitPrice})), null, 2));
+  //   // console.log('📊 Current items count:', items.length);
+  //   // console.log('📊 Current items:', JSON.stringify(items.map(i => ({id: i.productId, name: i.productName, qty: i.quantity, price: i.unitPrice})), null, 2));
     
-    const historyRecords: CreateHistoryRequest[] = [];
-    const changedByName = user?.name || user?.email || 'Unknown User';
+  //   const historyRecords: CreateHistoryRequest[] = [];
+  //   const changedByName = user?.name || user?.email || 'Unknown User';
 
-    // Create maps for easy comparison
-    const originalMap = new Map(originalItems.map(item => [item.productId, item]));
-    const currentMap = new Map(items.map(item => [item.productId, item]));
+  //   // Create maps for easy comparison
+  //   const originalMap = new Map(originalItems.map(item => [item.productId, item]));
+  //   const currentMap = new Map(items.map(item => [item.productId, item]));
 
-    // Find removed items
-    for (const [productId, originalItem] of originalMap) {
-      if (!currentMap.has(productId)) {
-        historyRecords.push({
-          action: 'REMOVED' as ItemHistoryAction,
-          productId,
-          productName: originalItem.productName,
-          oldQuantity: originalItem.quantity,
-          newQuantity: 0,
-          unitPrice: originalItem.unitPrice,
-          amountChange: -(originalItem.quantity * originalItem.unitPrice),
-          changedByName,
-        });
-      }
-    }
+  //   // Find removed items
+  //   for (const [productId, originalItem] of originalMap) {
+  //     if (!currentMap.has(productId)) {
+  //       historyRecords.push({
+  //         action: 'REMOVED' as ItemHistoryAction,
+  //         productId,
+  //         productName: originalItem.productName,
+  //         oldQuantity: originalItem.quantity,
+  //         newQuantity: 0,
+  //         unitPrice: originalItem.unitPrice,
+  //         amountChange: -(originalItem.quantity * originalItem.unitPrice),
+  //         changedByName,
+  //       });
+  //     }
+  //   }
 
-    // Find added items and quantity changes
-    for (const [productId, currentItem] of currentMap) {
-      const originalItem = originalMap.get(productId);
+  //   // Find added items and quantity changes
+  //   for (const [productId, currentItem] of currentMap) {
+  //     const originalItem = originalMap.get(productId);
       
-      if (!originalItem) {
-        // New item added
-        historyRecords.push({
-          action: 'ADDED' as ItemHistoryAction,
-          productId,
-          productName: currentItem.productName,
-          oldQuantity: 0,
-          newQuantity: currentItem.quantity,
-          unitPrice: currentItem.unitPrice,
-          amountChange: currentItem.quantity * currentItem.unitPrice,
-          changedByName,
-        });
-      } else if (originalItem.quantity !== currentItem.quantity) {
-        // Quantity changed
-        const action: ItemHistoryAction = currentItem.quantity > originalItem.quantity 
-          ? 'QTY_INCREASED' 
-          : 'QTY_DECREASED';
-        const qtyDiff = currentItem.quantity - originalItem.quantity;
+  //     if (!originalItem) {
+  //       // New item added
+  //       historyRecords.push({
+  //         action: 'ADDED' as ItemHistoryAction,
+  //         productId,
+  //         productName: currentItem.productName,
+  //         oldQuantity: 0,
+  //         newQuantity: currentItem.quantity,
+  //         unitPrice: currentItem.unitPrice,
+  //         amountChange: currentItem.quantity * currentItem.unitPrice,
+  //         changedByName,
+  //       });
+  //     } else if (originalItem.quantity !== currentItem.quantity) {
+  //       // Quantity changed
+  //       const action: ItemHistoryAction = currentItem.quantity > originalItem.quantity 
+  //         ? 'QTY_INCREASED' 
+  //         : 'QTY_DECREASED';
+  //       const qtyDiff = currentItem.quantity - originalItem.quantity;
         
-        historyRecords.push({
-          action,
-          productId,
-          productName: currentItem.productName,
-          oldQuantity: originalItem.quantity,
-          newQuantity: currentItem.quantity,
-          unitPrice: currentItem.unitPrice,
-          amountChange: qtyDiff * currentItem.unitPrice,
-          changedByName,
-        });
-      } else if (originalItem.unitPrice !== currentItem.unitPrice) {
-        // Price changed
-        const priceDiff = currentItem.unitPrice - originalItem.unitPrice;
+  //       historyRecords.push({
+  //         action,
+  //         productId,
+  //         productName: currentItem.productName,
+  //         oldQuantity: originalItem.quantity,
+  //         newQuantity: currentItem.quantity,
+  //         unitPrice: currentItem.unitPrice,
+  //         amountChange: qtyDiff * currentItem.unitPrice,
+  //         changedByName,
+  //       });
+  //     } else if (originalItem.unitPrice !== currentItem.unitPrice) {
+  //       // Price changed
+  //       const priceDiff = currentItem.unitPrice - originalItem.unitPrice;
         
-        historyRecords.push({
-          action: 'PRICE_CHANGED' as ItemHistoryAction,
-          productId,
-          productName: currentItem.productName,
-          oldQuantity: originalItem.quantity,
-          newQuantity: currentItem.quantity,
-          unitPrice: currentItem.unitPrice,
-          amountChange: priceDiff * currentItem.quantity,
-          changedByName,
-          notes: `Price changed from Rs. ${originalItem.unitPrice.toLocaleString()} to Rs. ${currentItem.unitPrice.toLocaleString()}`,
-        });
-      }
-    }
+  //       historyRecords.push({
+  //         action: 'PRICE_CHANGED' as ItemHistoryAction,
+  //         productId,
+  //         productName: currentItem.productName,
+  //         oldQuantity: originalItem.quantity,
+  //         newQuantity: currentItem.quantity,
+  //         unitPrice: currentItem.unitPrice,
+  //         amountChange: priceDiff * currentItem.quantity,
+  //         changedByName,
+  //         notes: `Price changed from Rs. ${originalItem.unitPrice.toLocaleString()} to Rs. ${currentItem.unitPrice.toLocaleString()}`,
+  //       });
+  //     }
+  //   }
 
-    // Save history records if any changes detected
+  //   // Save history records if any changes detected
     
-    if (historyRecords.length > 0) {
-      try {
-        // console.log('📤 Sending history to API...', { targetId, changes: historyRecords, shopId });
-        // Pass shopId for SuperAdmin support
-        // const result = await invoiceItemHistoryService.createHistory(targetId, historyRecords, shopId);
-        // console.log('✅ SUCCESS! Recorded', historyRecords.length, 'change(s) for invoice', invoiceId);
-        // console.log('✅ API Response:', result);
-      } catch (error: any) {
-        console.error('❌ FAILED to record item history!');
-        console.error('❌ Error:', error.message || error);
-      }
-    } else {
-      // console.log('ℹ️ No changes detected between original and current items - nothing to record');
-    }
-  };
+  //   if (historyRecords.length > 0) {
+  //     try {
+  //       // console.log('📤 Sending history to API...', { targetId, changes: historyRecords, shopId });
+  //       // Pass shopId for SuperAdmin support
+  //       // const result = await invoiceItemHistoryService.createHistory(targetId, historyRecords, shopId);
+  //       // console.log('✅ SUCCESS! Recorded', historyRecords.length, 'change(s) for invoice', invoiceId);
+  //       // console.log('✅ API Response:', result);
+  //     } catch (error: any) {
+  //       console.error('❌ FAILED to record item history!');
+  //       console.error('❌ Error:', error.message || error);
+  //     }
+  //   } else {
+  //     // console.log('ℹ️ No changes detected between original and current items - nothing to record');
+  //   }
+  // };
 
   const handleSave = async () => {
     if (!invoice || items.length === 0 || isSaving) return;
