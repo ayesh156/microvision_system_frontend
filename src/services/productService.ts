@@ -372,14 +372,22 @@ export const productService = {
   },
 
   /**
-   * Get product stock movements
+   * Get product stock movements (Audit Trail)
+   * Safely unwraps nested movements array from any backend shape
    */
-  async getStockMovements(id: string): Promise<StockMovement[]> {
-    const response = await fetchWithAuth(`${API_BASE_URL}/products/${id}/stock-movements`, {
+async getStockMovements(id: string): Promise<StockMovement[]> {
+    const response = await fetchWithAuth(`${API_BASE_URL}/products/${id}/movements`, {
       headers: getAuthHeaders(),
     });
-    const result = await handleResponse<APIResponse<StockMovement[]>>(response);
-    return result.data;
+    const result = await handleResponse<any>(response);
+
+    // 🔒 Extract array whether it's directly data, data.movements, or movements property
+    if (Array.isArray(result)) return result;
+    if (Array.isArray(result?.data)) return result.data;
+    if (Array.isArray(result?.data?.movements)) return result.data.movements;
+    if (Array.isArray(result?.movements)) return result.movements;
+    
+    return [];
   },
 
   /**
@@ -431,6 +439,7 @@ export const productService = {
     await handleResponse<APIResponse<null>>(response);
     // console.log('✅ Product deleted');
   },
+
 };
 
 // ===================================
@@ -493,5 +502,7 @@ export const convertFrontendToAPIProduct = (product: Partial<Product>, categoryI
   
   return data;
 };
+
+
 
 export default productService;

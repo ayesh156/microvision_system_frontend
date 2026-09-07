@@ -53,6 +53,10 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
   const [quantity, setQuantity] = useState(1);
   const [selectedWarranty, setSelectedWarranty] = useState<string>(''); // Custom warranty selection
   
+  // ✅ UX: Collapsible Add Products panel to prevent user confusion
+  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  
   // Warranty options (matching CreateInvoice format)
   const warrantyOptions = [
     { label: 'No Warranty', value: '', days: 0 },
@@ -553,16 +557,7 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
       }
     });
 
-    // Record item changes in parallel (don't block save) for faster UI response
-    // Use setTimeout to ensure it runs after onSave starts
-    const invoiceId = invoice.id;
-    const apiId = invoice.apiId;
-    setTimeout(() => {
-      recordItemChanges(invoiceId, apiId).catch(err => 
-        console.warn('⚠️ History recording failed:', err)
-      );
-    }, 0);
-
+    // ✅ Backend atomic transaction now handles stock restoration and movements internally
     await onSave(updatedInvoice, stockChanges);
   };
 
@@ -942,257 +937,248 @@ export const InvoiceEditModal: React.FC<InvoiceEditModalProps> = ({
           </div>
 
           {/* Add Products Section */}
-          <div className={`p-3 sm:p-4 rounded-xl border ${
-            theme === 'dark' ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-50 border-slate-200'
+          <div className={`rounded-xl border transition-all duration-300 overflow-hidden ${
+            isShaking ? 'animate-bounce' : ''
+          } ${
+            isAddProductOpen 
+              ? (theme === 'dark' ? 'bg-slate-800/40 border-cyan-500/50 shadow-lg shadow-cyan-500/5' : 'bg-white border-cyan-500 shadow-md')
+              : (theme === 'dark' ? 'bg-slate-800/20 border-slate-700/60 hover:border-slate-600' : 'bg-slate-50/80 border-slate-200 hover:border-slate-300')
           }`}>
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                <Package className="w-4 h-4 text-cyan-400" />
+            {/* Accordion Toggle Header */}
+            <button
+              type="button"
+              onClick={() => setIsAddProductOpen(!isAddProductOpen)}
+              className="w-full p-3 sm:p-4 flex items-center justify-between transition-colors text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${
+                  isAddProductOpen 
+                    ? 'bg-cyan-500 text-white' 
+                    : (theme === 'dark' ? 'bg-cyan-500/10 text-cyan-400' : 'bg-cyan-50 text-cyan-600')
+                }`}>
+                  <Plus className={`w-4 h-4 transition-transform duration-300 ${isAddProductOpen ? 'rotate-45' : ''}`} />
+                </div>
+                <div>
+                  <h3 className={`text-sm sm:text-base font-semibold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                    Add More Products to Invoice
+                  </h3>
+                  <p className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {isAddProductOpen ? 'Click to minimize product search' : 'Click here if you need to add an extra item'}
+                  </p>
+                </div>
               </div>
-              <h3 className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                Add Products
-              </h3>
-            </div>
 
-            {/* Product Search */}
-            <div className="space-y-2 mb-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={productSearch}
-                  onChange={(e) => {
-                    setProductSearch(e.target.value);
-                    setSelectedProductId('');
-                  }}
-                  className={`w-full pl-10 pr-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                    theme === 'dark'
-                      ? 'border-slate-700 bg-slate-800/50 text-white placeholder-slate-500'
-                      : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'
-                  }`}
-                />
+              <div className="flex items-center gap-2">
+                <span className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-all ${
+                  isAddProductOpen
+                    ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30'
+                    : (theme === 'dark' ? 'bg-slate-700/50 text-slate-400' : 'bg-slate-200 text-slate-600')
+                }`}>
+                  {isAddProductOpen ? 'Close Search' : '+ Add Product'}
+                </span>
               </div>
-              
-              {/* Product List */}
-              <div className={`max-h-[150px] overflow-y-auto border rounded-xl ${
-                theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+            </button>
+
+            {/* Collapsible Content Area */}
+            {isAddProductOpen && (
+              <div className={`p-3 sm:p-4 border-t animate-in fade-in slide-in-from-top-2 duration-200 ${
+                theme === 'dark' ? 'border-slate-700/50 bg-slate-900/30' : 'border-slate-100 bg-slate-50/50'
               }`}>
-                {filteredProducts.length === 0 ? (
-                  <div className={`p-4 text-center text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                    No products found
-                  </div>
-                ) : (
-                  filteredProducts.slice(0, 10).map((p) => {
-                    // Calculate REAL-TIME stock using the helper function
-                    // This shows what stock WILL BE after saving current changes
-                    const realTimeStock = calculateRealTimeStock(p.id, p.stock);
-                    const isLowStock = realTimeStock > 0 && realTimeStock <= 5;
-                    const isOutOfStock = realTimeStock <= 0;
-                    
-                    return (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedProductId(p.id);
-                          setProductSearch(p.name);
-                          // Auto-select product's default warranty (map to code format)
-                          setSelectedWarranty(mapWarrantyToCode(p.warranty));
-                        }}
-                        disabled={isOutOfStock}
-                        className={`w-full px-3 sm:px-4 py-2 text-left border-b last:border-b-0 transition-colors ${
-                          theme === 'dark' ? 'border-slate-700/50' : 'border-slate-100'
-                        } ${
-                          isOutOfStock 
-                            ? 'opacity-50 cursor-not-allowed'
-                            : selectedProductId === p.id
-                              ? 'bg-emerald-500/10'
-                              : theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-100'
-                        }`}
-                      >
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                          <div className="flex items-center gap-1.5 min-w-0 flex-1 flex-wrap">
-                            <span className={`font-medium text-sm truncate max-w-[140px] sm:max-w-none ${
-                              isOutOfStock 
-                                ? (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')
-                                : selectedProductId === p.id 
-                                  ? 'text-emerald-400' 
-                                  : (theme === 'dark' ? 'text-white' : 'text-slate-900')
-                            }`}>
-                              {p.name}
-                            </span>
-                            {/* Real-Time Stock Badge */}
-                            <span className={`flex-shrink-0 text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-medium ${
-                              isOutOfStock
-                                ? (theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-50 text-red-600')
-                                : isLowStock
-                                  ? (theme === 'dark' ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-50 text-amber-600')
-                                  : (theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600')
-                            }`}>
-                              {isOutOfStock ? 'Out of Stock' : `${realTimeStock} avl`}
-                            </span>
-                            {p.warranty && (
-                              <span className={`flex-shrink-0 text-[10px] sm:text-xs px-1.5 py-0.5 rounded ${
-                                theme === 'dark' ? 'bg-blue-500/20 text-blue-300' : 'bg-blue-50 text-blue-600'
-                              }`}>
-                                {p.warranty}
-                              </span>
-                            )}
-                          </div>
-                          <span className={`text-sm font-semibold flex-shrink-0 ${
-                            selectedProductId === p.id 
-                              ? 'text-emerald-400' 
-                              : (theme === 'dark' ? 'text-slate-300' : 'text-slate-600')
-                          }`}>
-                            Rs. {p.price.toLocaleString()}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-
-            {currentProduct && (
-              <div className="p-2 mb-4 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
-                <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
-                  Selected: <span className="font-semibold text-emerald-400">{currentProduct.name}</span> • 
-                  <span className={`ml-1 font-medium ${
-                    calculateRealTimeStock(currentProduct.id, currentProduct.stock) <= 0 
-                      ? 'text-red-400' 
-                      : calculateRealTimeStock(currentProduct.id, currentProduct.stock) <= 5 
-                        ? 'text-amber-400' 
-                        : 'text-emerald-400'
-                  }`}>
-                    {calculateRealTimeStock(currentProduct.id, currentProduct.stock)} avl
-                  </span>
-                  {currentProduct.warranty && (
-                    <span className="ml-1 sm:ml-2 text-blue-400">• 🛡️ {currentProduct.warranty}</span>
-                  )}
-                </p>
-              </div>
-            )}
-
-            {/* Payment Method Selector */}
-            <div className="mb-4">
-              <Label className="text-gray-900 dark:text-white flex items-center gap-2 mb-2">
-                <CreditCard className="w-4 h-4 text-blue-500" />
-                Payment Method
-              </Label>
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
-                {[
-                  { value: 'cash', label: 'Cash', emoji: '💵', color: 'emerald' },
-                  { value: 'card', label: 'Card', emoji: '💳', color: 'blue' },
-                  { value: 'bank', label: 'Bank', emoji: '🏦', color: 'purple' },
-                  { value: 'credit', label: 'Credit', emoji: '⏳', color: 'red' },
-                ].map(({ value, label, emoji, color }) => {
-                  const isCreditDisabled = value === 'credit' && isWalkInInvoice;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => !isCreditDisabled && setAddPaymentMethod(value as 'cash' | 'card' | 'bank' | 'credit')}
-                      disabled={isCreditDisabled}
-                      title={isCreditDisabled ? 'Credit not available for walk-in customers' : undefined}
-                      className={`flex flex-col items-center gap-0.5 sm:gap-1 p-1.5 sm:p-2 rounded-xl border-2 transition-all ${
-                        isCreditDisabled
-                          ? 'opacity-40 cursor-not-allowed border-slate-500/30'
-                          : addPaymentMethod === value
-                            ? `scale-105`
-                            : theme === 'dark' 
-                              ? 'border-slate-700 hover:border-slate-600 hover:bg-slate-800/50' 
-                              : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                {/* Product Search */}
+                <div className="space-y-2 mb-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Search products..."
+                      value={productSearch}
+                      onChange={(e) => {
+                        setProductSearch(e.target.value);
+                        setSelectedProductId('');
+                      }}
+                      className={`w-full pl-10 pr-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                        theme === 'dark'
+                          ? 'border-slate-700 bg-slate-800/50 text-white placeholder-slate-500'
+                          : 'border-slate-300 bg-white text-slate-900 placeholder-slate-400'
                       }`}
-                      style={!isCreditDisabled && addPaymentMethod === value ? {
-                        borderColor: color === 'emerald' ? '#10b981' : color === 'blue' ? '#3b82f6' : color === 'purple' ? '#8b5cf6' : '#ef4444',
-                        backgroundColor: color === 'emerald' ? 'rgba(16, 185, 129, 0.1)' : color === 'blue' ? 'rgba(59, 130, 246, 0.1)' : color === 'purple' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(239, 68, 68, 0.1)'
-                      } : {}}
-                    >
-                      <span className="text-lg sm:text-xl">{emoji}</span>
-                      <span className={`text-[10px] sm:text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
-                        {label}
+                    />
+                  </div>
+                  
+                  {/* Product List */}
+                  <div className={`max-h-[150px] overflow-y-auto border rounded-xl ${
+                    theme === 'dark' ? 'border-slate-700' : 'border-slate-200'
+                  }`}>
+                    {filteredProducts.length === 0 ? (
+                      <div className={`p-4 text-center text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
+                        No products found
+                      </div>
+                    ) : (
+                      filteredProducts.slice(0, 10).map((p) => {
+                        const realTimeStock = calculateRealTimeStock(p.id, p.stock);
+                        const isLowStock = realTimeStock > 0 && realTimeStock <= 5;
+                        const isOutOfStock = realTimeStock <= 0;
+                        
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setSelectedProductId(p.id);
+                              setProductSearch(p.name);
+                              setSelectedWarranty(mapWarrantyToCode(p.warranty));
+                            }}
+                            disabled={isOutOfStock}
+                            className={`w-full px-3 sm:px-4 py-2 text-left border-b last:border-b-0 transition-colors ${
+                              theme === 'dark' ? 'border-slate-700/50' : 'border-slate-100'
+                            } ${
+                              isOutOfStock 
+                                ? 'opacity-50 cursor-not-allowed'
+                                : selectedProductId === p.id
+                                  ? 'bg-emerald-500/10'
+                                  : theme === 'dark' ? 'hover:bg-slate-700/50' : 'hover:bg-slate-100'
+                            }`}
+                          >
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+                              <div className="flex items-center gap-1.5 min-w-0 flex-1 flex-wrap">
+                                <span className={`font-medium text-sm truncate max-w-[140px] sm:max-w-none ${
+                                  isOutOfStock 
+                                    ? (theme === 'dark' ? 'text-slate-500' : 'text-slate-400')
+                                    : selectedProductId === p.id 
+                                      ? 'text-emerald-400' 
+                                      : (theme === 'dark' ? 'text-white' : 'text-slate-900')
+                                }`}>
+                                  {p.name}
+                                </span>
+                                <span className={`flex-shrink-0 text-[10px] sm:text-xs px-1.5 py-0.5 rounded font-medium ${
+                                  isOutOfStock
+                                    ? (theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-50 text-red-600')
+                                    : isLowStock
+                                      ? (theme === 'dark' ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-50 text-amber-600')
+                                      : (theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-50 text-emerald-600')
+                                }`}>
+                                  {isOutOfStock ? 'Out of Stock' : `${realTimeStock} avl`}
+                                </span>
+                              </div>
+                              <span className={`text-sm font-semibold flex-shrink-0 ${
+                                selectedProductId === p.id 
+                                  ? 'text-emerald-400' 
+                                  : (theme === 'dark' ? 'text-slate-300' : 'text-slate-600')
+                              }`}>
+                                Rs. {p.price.toLocaleString()}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+
+                {currentProduct && (
+                  <div className="p-2 mb-4 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
+                    <p className={`text-xs sm:text-sm ${theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}`}>
+                      Selected: <span className="font-semibold text-emerald-400">{currentProduct.name}</span> • 
+                      <span className="ml-1 font-medium text-emerald-400">
+                        {calculateRealTimeStock(currentProduct.id, currentProduct.stock)} avl
                       </span>
-                    </button>
-                  );
-                })}
-              </div>
-              {isWalkInInvoice && (
-                <p className={`text-xs mt-2 flex items-center gap-1 ${theme === 'dark' ? 'text-amber-400' : 'text-amber-600'}`}>
-                  <AlertTriangle className="w-3 h-3" />
-                  Credit payment not available for walk-in customers
-                </p>
-              )}
-            </div>
+                    </p>
+                  </div>
+                )}
 
-            {/* Warranty Selection */}
-            <div className="mb-4">
-              <Label className="text-gray-900 dark:text-white flex items-center gap-2 mb-2">
-                <Shield className="w-4 h-4 text-blue-500" />
-                Warranty
-              </Label>
-              <SearchableSelect
-                options={warrantyOptions.map(opt => ({
-                  value: opt.value,
-                  label: opt.label,
-                }))}
-                value={selectedWarranty}
-                onValueChange={setSelectedWarranty}
-                placeholder="🛡️ Select warranty period..."
-                searchPlaceholder="Search warranty..."
-                emptyMessage="No warranty option found"
-                theme={theme}
-              />
-              {selectedWarranty && selectedWarranty !== mapWarrantyToCode(currentProduct?.warranty) && (
-                <p className={`text-xs mt-1.5 flex items-center gap-1.5 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  Custom warranty will be applied: <strong>{warrantyOptions.find(opt => opt.value === selectedWarranty)?.label || selectedWarranty}</strong>
-                </p>
-              )}
-            </div>
+                {/* Payment Method Selector */}
+                <div className="mb-4">
+                  <Label className="text-gray-900 dark:text-white flex items-center gap-2 mb-2">
+                    <CreditCard className="w-4 h-4 text-blue-500" />
+                    Payment Method
+                  </Label>
+                  <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                    {[
+                      { value: 'cash', label: 'Cash', emoji: '💵', color: 'emerald' },
+                      { value: 'card', label: 'Card', emoji: '💳', color: 'blue' },
+                      { value: 'bank', label: 'Bank', emoji: '🏦', color: 'purple' },
+                      { value: 'credit', label: 'Credit', emoji: '⏳', color: 'red' },
+                    ].map(({ value, label, emoji, color }) => {
+                      const isCreditDisabled = value === 'credit' && isWalkInInvoice;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => !isCreditDisabled && setAddPaymentMethod(value as any)}
+                          disabled={isCreditDisabled}
+                          className={`flex flex-col items-center gap-0.5 sm:gap-1 p-1.5 sm:p-2 rounded-xl border-2 transition-all ${
+                            isCreditDisabled
+                              ? 'opacity-40 cursor-not-allowed border-slate-500/30'
+                              : addPaymentMethod === value
+                                ? `scale-105`
+                                : theme === 'dark' 
+                                  ? 'border-slate-700 hover:border-slate-600 hover:bg-slate-800/50' 
+                                  : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                          }`}
+                          style={!isCreditDisabled && addPaymentMethod === value ? {
+                            borderColor: color === 'emerald' ? '#10b981' : color === 'blue' ? '#3b82f6' : color === 'purple' ? '#8b5cf6' : '#ef4444',
+                            backgroundColor: color === 'emerald' ? 'rgba(16, 185, 129, 0.1)' : color === 'blue' ? 'rgba(59, 130, 246, 0.1)' : color === 'purple' ? 'rgba(139, 92, 246, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+                          } : {}}
+                        >
+                          <span className="text-lg sm:text-xl">{emoji}</span>
+                          <span className={`text-[10px] sm:text-xs font-medium ${theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}`}>
+                            {label}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
-            {/* Quantity & Add */}
-            <div className="flex gap-2 items-end">
-              <div className="flex-1">
-                <Label className="text-gray-900 dark:text-white">Quantity</Label>
-                <input
-                  type="number"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className={`w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                    theme === 'dark'
-                      ? 'border-slate-700 bg-slate-800/50 text-white'
-                      : 'border-slate-300 bg-white text-slate-900'
-                  }`}
-                />
-              </div>
-              <button
-                onClick={addItem}
-                disabled={!selectedProductId || quantity <= 0}
-                className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 disabled:opacity-50 text-white rounded-xl font-medium flex items-center gap-2 transition-all"
-              >
-                <Plus className="w-4 h-4" />
-                Add
-              </button>
-            </div>
-            
-            {/* Selected Payment Method Info */}
-            {addPaymentMethod !== 'credit' && (
-              <div className={`mt-3 p-2 rounded-lg text-sm flex items-center gap-2 ${
-                theme === 'dark' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-600'
-              }`}>
-                <CheckCircle className="w-4 h-4" />
-                <span>Product will be added with <strong>{addPaymentMethod}</strong> payment</span>
-              </div>
-            )}
-            {addPaymentMethod === 'credit' && !isWalkInInvoice && (
-              <div className={`mt-3 p-2 rounded-lg text-sm flex items-center gap-2 ${
-                theme === 'dark' ? 'bg-amber-500/10 text-amber-400' : 'bg-amber-50 text-amber-600'
-              }`}>
-                <CircleDollarSign className="w-4 h-4" />
-                <span>Product will be added as <strong>credit</strong> (unpaid)</span>
+                {/* Warranty Selection */}
+                <div className="mb-4">
+                  <Label className="text-gray-900 dark:text-white flex items-center gap-2 mb-2">
+                    <Shield className="w-4 h-4 text-blue-500" />
+                    Warranty
+                  </Label>
+                  <SearchableSelect
+                    options={warrantyOptions.map(opt => ({
+                      value: opt.value,
+                      label: opt.label,
+                    }))}
+                    value={selectedWarranty}
+                    onValueChange={setSelectedWarranty}
+                    placeholder="🛡️ Select warranty period..."
+                    searchPlaceholder="Search warranty..."
+                    emptyMessage="No warranty option found"
+                    theme={theme}
+                  />
+                </div>
+
+                {/* Quantity & Add */}
+                <div className="flex gap-2 items-end">
+                  <div className="flex-1">
+                    <Label className="text-gray-900 dark:text-white">Quantity</Label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={quantity}
+                      onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+                      className={`w-full mt-1 px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                        theme === 'dark'
+                          ? 'border-slate-700 bg-slate-800/50 text-white'
+                          : 'border-slate-300 bg-white text-slate-900'
+                      }`}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addItem();
+                      setIsShaking(true);
+                      setTimeout(() => setIsShaking(false), 600);
+                    }}
+                    disabled={!selectedProductId || quantity <= 0}
+                    className="px-5 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 disabled:opacity-50 text-white rounded-xl font-medium flex items-center gap-2 transition-all shadow-md"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add to Invoice
+                  </button>
+                </div>
               </div>
             )}
           </div>

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
-import { mockProducts } from '../data/mockData';
+import { useDataCache } from '../contexts/DataCacheContext';
 import type { Product } from '../data/mockData';
 import { SearchableSelect } from '../components/ui/searchable-select';
 import {
@@ -119,27 +119,31 @@ export const ProductLabels: React.FC = () => {
     }
   }, [isResizing, handleMouseMove, handleMouseUp]);
 
+  // AUDIT: Get live products from real-time cache context
+  const { products: cachedLiveProducts } = useDataCache();
+  const availableProducts = cachedLiveProducts.length > 0 ? cachedLiveProducts : [];
+
   // Filter products based on search
   const filteredProducts = useMemo(() => {
-    if (!searchQuery) return mockProducts;
+    if (!searchQuery) return availableProducts;
     const query = searchQuery.toLowerCase();
-    return mockProducts.filter(
+    return availableProducts.filter(
       (p) =>
         p.name.toLowerCase().includes(query) ||
         p.serialNumber.toLowerCase().includes(query) ||
         (p.barcode && p.barcode.toLowerCase().includes(query))
     );
-  }, [searchQuery]);
+  }, [searchQuery, availableProducts]);
 
   // Product options for searchable select
-  const productOptions = mockProducts.map((p) => ({
+  const productOptions = availableProducts.map((p) => ({
     value: p.id,
     label: `${p.name} (${p.serialNumber})`,
   }));
 
   // Handlers
   const handleAddProduct = (productId: string) => {
-    const product = mockProducts.find((p) => p.id === productId);
+    const product = availableProducts.find((p) => p.id === productId);
     if (!product) return;
 
     const existing = selectedProducts.find((sp) => sp.product.id === productId);

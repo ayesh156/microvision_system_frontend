@@ -615,23 +615,32 @@ export const Products: React.FC = () => {
   };
 
   // Stock & Pricing Modal Handler - Fetches stock movements and price history from API
-  const handleOpenPricingModal = async (product: Product) => {
+  const handleOpenPricingModal = async (product: Product, defaultTab: 'overview' | 'stock-movements' | 'price-history' = 'overview') => {
     setSelectedProductForPricing(product);
-    setPricingActiveTab('overview');
-    setStockMovements([]);
-    setPriceHistory([]);
+    setPricingActiveTab(defaultTab);
     setIsPricingModalOpen(true);
     setIsLoadingPricingData(true);
     
     try {
-      const [movementsResult, historyResult] = await Promise.all([
-        productService.getStockMovements(product.id),
-        productService.getPriceHistory(product.id)
+      // ✅ Fetch movements and history concurrently
+      const [movementsRes, historyRes] = await Promise.all([
+        productService.getStockMovements(product.id).catch(() => []),
+        productService.getPriceHistory(product.id).catch(() => [])
       ]);
-      setStockMovements(movementsResult);
-      setPriceHistory(historyResult);
+
+      const safeMovements = Array.isArray(movementsRes)
+        ? movementsRes
+        : (movementsRes as any)?.data?.movements || (movementsRes as any)?.movements || (movementsRes as any)?.data || [];
+        
+      const safeHistory = Array.isArray(historyRes)
+        ? historyRes
+        : (historyRes as any)?.data || [];
+
+      setStockMovements(Array.isArray(safeMovements) ? safeMovements : []);
+      setPriceHistory(Array.isArray(safeHistory) ? safeHistory : []);
     } catch (error) {
-      console.error('Failed to load pricing data:', error);
+      setStockMovements([]);
+      setPriceHistory([]);
     } finally {
       setIsLoadingPricingData(false);
     }
@@ -1508,14 +1517,20 @@ export const Products: React.FC = () => {
                     </td>
                     <td className="px-3 py-3">
                       <div className="flex items-center justify-end gap-1">
+                        {/* ✅ AUDIT: Direct Trigger to Stock Movements Tab */}
                         <button 
-                          onClick={() => handleOpenPricingModal(product)}
+                          onClick={() => {
+                            setSelectedProductForPricing(product);
+                            setPricingActiveTab('stock-movements');
+                            setIsPricingModalOpen(true);
+                            handleOpenPricingModal(product);
+                          }}
                           className={`p-1.5 rounded-lg transition-colors ${
-                            theme === 'dark' ? 'hover:bg-purple-500/10 text-purple-400' : 'hover:bg-purple-50 text-purple-600'
+                            theme === 'dark' ? 'hover:bg-cyan-500/10 text-cyan-400' : 'hover:bg-cyan-50 text-cyan-600'
                           }`}
-                          title="Stock & Pricing Details"
+                          title="View Stock Movements & Audit History"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Package className="w-4 h-4" />
                         </button>
                         <button 
                           onClick={() => handleViewSalesHistory(product)}
@@ -2160,56 +2175,36 @@ export const Products: React.FC = () => {
                 </div>
             </div>
 
-            {/* Stats Cards */}
+            {/* Compact Analytics Header Bar - Saves 60% vertical space */}
             {(filteredSalesHistory.length > 0 || salesStats) && (
-              <div className={`px-4 sm:px-6 py-3 sm:py-4 border-b grid grid-cols-3 gap-2 sm:gap-4 flex-shrink-0 ${
-                theme === 'dark' ? 'border-slate-700 bg-slate-800/30' : 'border-slate-200 bg-slate-50/50'
+              <div className={`px-4 sm:px-6 py-2.5 border-b flex items-center justify-between gap-2 flex-shrink-0 ${
+                theme === 'dark' ? 'border-slate-700 bg-slate-800/40' : 'border-slate-200 bg-slate-100/60'
               }`}>
-                <div className={`p-2.5 sm:p-4 rounded-xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white border border-slate-200'}`}>
-                  <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3">
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      theme === 'dark' ? 'bg-blue-500/10' : 'bg-blue-50'
-                    }`}>
-                      <TrendingUp className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                    </div>
-                    <div className="text-center sm:text-left">
-                      <p className={`text-[10px] sm:text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Total Sold</p>
-                      <p className={`text-sm sm:text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                        <span className="sm:hidden">{getSalesStats().totalSold}</span>
-                        <span className="hidden sm:inline">{getSalesStats().totalSold} units</span>
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Sold:</span>
+                  <span className={`text-xs sm:text-sm font-bold px-2 py-0.5 rounded-lg ${
+                    theme === 'dark' ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'
+                  }`}>
+                    {getSalesStats().totalSold} units
+                  </span>
                 </div>
-                <div className={`p-2.5 sm:p-4 rounded-xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white border border-slate-200'}`}>
-                  <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3">
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      theme === 'dark' ? 'bg-emerald-500/10' : 'bg-emerald-50'
-                    }`}>
-                      <DollarSign className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`} />
-                    </div>
-                    <div className="text-center sm:text-left min-w-0">
-                      <p className={`text-[10px] sm:text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Total Revenue</p>
-                      <p className={`text-sm sm:text-lg font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                        {formatCurrency(getSalesStats().totalRevenue)}
-                      </p>
-                    </div>
-                  </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Revenue:</span>
+                  <span className={`text-xs sm:text-sm font-bold px-2 py-0.5 rounded-lg ${
+                    theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
+                  }`}>
+                    {formatCurrency(getSalesStats().totalRevenue)}
+                  </span>
                 </div>
-                <div className={`p-2.5 sm:p-4 rounded-xl ${theme === 'dark' ? 'bg-slate-800' : 'bg-white border border-slate-200'}`}>
-                  <div className="flex flex-col sm:flex-row items-center sm:items-center gap-1.5 sm:gap-3">
-                    <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      theme === 'dark' ? 'bg-amber-500/10' : 'bg-amber-50'
-                    }`}>
-                      <BadgeDollarSign className={`w-4 h-4 sm:w-5 sm:h-5 ${theme === 'dark' ? 'text-amber-400' : 'text-amber-600'}`} />
-                    </div>
-                    <div className="text-center sm:text-left min-w-0">
-                      <p className={`text-[10px] sm:text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Avg. Price</p>
-                      <p className={`text-sm sm:text-lg font-bold truncate ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                        {formatCurrency(getSalesStats().avgPrice)}
-                      </p>
-                    </div>
-                  </div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>Avg:</span>
+                  <span className={`text-xs sm:text-sm font-bold px-2 py-0.5 rounded-lg ${
+                    theme === 'dark' ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {formatCurrency(getSalesStats().avgPrice)}
+                  </span>
                 </div>
               </div>
             )}
@@ -2410,7 +2405,14 @@ export const Products: React.FC = () => {
                 ].map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => setPricingActiveTab(tab.id as 'overview' | 'stock-movements' | 'price-history')}
+                    onClick={() => {
+                      const nextTab = tab.id as 'overview' | 'stock-movements' | 'price-history';
+                      setPricingActiveTab(nextTab);
+                      // ✅ If switching to movements and list is currently empty, re-fetch immediately
+                      if (nextTab === 'stock-movements' && stockMovements.length === 0 && selectedProductForPricing) {
+                        handleOpenPricingModal(selectedProductForPricing, 'stock-movements');
+                      }
+                    }}
                     className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       pricingActiveTab === tab.id
                         ? theme === 'dark'
@@ -2695,7 +2697,19 @@ export const Products: React.FC = () => {
                                   {movement.previousStock} → {movement.newStock}
                                 </td>
                                 <td className={`px-4 py-3 text-sm ${theme === 'dark' ? 'text-slate-400' : 'text-slate-500'}`}>
-                                  {movement.notes || movement.referenceNumber || '-'}
+                                  {/* ✅ Navigate directly to invoice if movement is an invoice reference */}
+                                  {movement.referenceType === 'invoice' && (movement.referenceNumber || movement.referenceId) ? (
+                                    <button
+                                      type="button"
+                                      onClick={() => navigate(`/system/invoices/${movement.referenceNumber || movement.referenceId}`)}
+                                      className="text-emerald-500 hover:underline font-medium inline-flex items-center gap-1"
+                                    >
+                                      <Receipt className="w-3.5 h-3.5" />
+                                      {movement.notes || `Invoice #${movement.referenceNumber}`}
+                                    </button>
+                                  ) : (
+                                    movement.notes || movement.referenceNumber || '-'
+                                  )}
                                 </td>
                               </tr>
                             ))}
