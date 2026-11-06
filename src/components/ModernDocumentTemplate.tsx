@@ -139,43 +139,48 @@ export const ModernDocumentTemplate = forwardRef<HTMLDivElement, ModernDocumentT
             .modern-document-template {
               width: 100% !important;
               max-width: none !important;
-              height: 281mm !important;
-              padding: 8mm 10mm !important;
+              height: auto !important;
+              min-height: 281mm !important;
+              padding: 4mm 6mm !important;
               margin: 0 !important;
               background: white !important;
               color: #000 !important;
               font-family: 'Segoe UI', 'Arial', sans-serif !important;
-              font-size: 9pt !important;
+              font-size: 8.5pt !important;
               print-color-adjust: exact !important;
               -webkit-print-color-adjust: exact !important;
-              display: flex !important;
-              flex-direction: column !important;
-              justify-content: space-between !important;
+              display: block !important;
             }
 
             .modern-document-template .doc-content-wrapper {
-              flex: 1 1 auto !important;
-              display: flex !important;
-              flex-direction: column !important;
+              display: block !important;
               min-height: 0 !important;
             }
 
             .modern-document-template .items-table-container {
-              flex: 1 1 auto !important;
-              min-height: 280px !important;
+              overflow: visible !important;
+              min-height: auto !important;
+              border: 1px solid #ddd !important;
+              margin-bottom: 12px !important;
+            }
+
+            /* ✅ Allow table rows to break across pages cleanly without cutting items */
+            .items-table {
+              page-break-inside: auto !important;
+            }
+
+            .items-table tr {
+              page-break-inside: avoid !important;
+              page-break-after: auto !important;
             }
 
             .modern-document-template .doc-footer-and-signatures {
-              flex: 0 0 auto !important;
               page-break-inside: avoid !important;
+              margin-top: 15px !important;
             }
             
             .no-print {
               display: none !important;
-            }
-
-            table {
-              page-break-inside: avoid;
             }
 
             .items-table-watermark {
@@ -183,11 +188,11 @@ export const ModernDocumentTemplate = forwardRef<HTMLDivElement, ModernDocumentT
             }
           }
           
-          /* A4 Portrait - 210mm x 297mm with Full Height Flex Layout */
+          /* ✅ SCREEN PREVIEW FIX: Auto height so all 10+ items show without truncation */
           .modern-document-template {
             width: 210mm;
             min-height: 297mm;
-            height: 297mm;
+            height: auto;
             padding: 10mm;
             margin: 0 auto;
             background: white;
@@ -200,14 +205,12 @@ export const ModernDocumentTemplate = forwardRef<HTMLDivElement, ModernDocumentT
             print-color-adjust: exact;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: flex-start;
           }
 
           /* Content wrapper for top sections */
           .doc-content-wrapper {
-            flex: 1 1 auto;
-            display: flex;
-            flex-direction: column;
+            display: block;
             min-height: 0;
           }
 
@@ -411,16 +414,15 @@ export const ModernDocumentTemplate = forwardRef<HTMLDivElement, ModernDocumentT
              ITEMS TABLE - High Density with Dynamic Expansion
              ═══════════════════════════════════════════════════════════════ */
           
+          /* ✅ Overflow visible to prevent hiding rows exceeding single-page box */
           .items-table-container {
             position: relative;
             margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            overflow: hidden;
-            flex: 1 1 auto;
-            min-height: 280px;
-            display: flex;
-            flex-direction: column;
+            overflow: visible;
+            min-height: 200px;
+            display: block;
           }
 
           .items-table-wrapper {
